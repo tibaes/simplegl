@@ -3,10 +3,13 @@
 #include <GL/glut.h>
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 const int WIN_HEIGHT = 800;
 const int WIN_WIDTH = 1600;
+
+vector<pair<int, int>> ctrlPts;
 
 void display(void) {
   glClear(GL_COLOR_BUFFER_BIT);
@@ -14,16 +17,14 @@ void display(void) {
 }
 
 void mouse(int button, int state, int x, int y) {
-  switch (button) {
-  case GLUT_LEFT_BUTTON:
-    cout << "left button" << endl;
-    break;
-  case GLUT_MIDDLE_BUTTON:
-    cout << "middle button" << endl;
-    break;
-  case GLUT_RIGHT_BUTTON:
-    cout << "right button" << endl;
-    break;
+  if ((button == GLUT_RIGHT_BUTTON || button == GLUT_LEFT_BUTTON) &&
+      state == GLUT_DOWN) {
+    if (x < WIN_WIDTH / 2) {
+      cout << "adding controll point: (" << x << ", " << y << ")" << endl;
+      ctrlPts.push_back(pair<int, int>(x, y));
+    } else {
+      cout << "outside drawing area: (" << x << ", " << y << ")" << endl;
+    }
   }
 }
 
