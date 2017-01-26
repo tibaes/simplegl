@@ -27,6 +27,17 @@ void mouse(int button, int state, int x, int y) {
   }
 }
 
+void keyboard(unsigned char key, int x, int y) {
+  switch (key) {
+  case 'q':
+    cout << "reset" << endl;
+    break;
+  default:
+    cout << "another key.." << endl;
+    break;
+  }
+}
+
 void init(void) { glClearColor(0.0, 0.0, 0.0, 0.0); }
 
 int main(int argc, char **argv) {
@@ -38,6 +49,7 @@ int main(int argc, char **argv) {
   init();
   glutDisplayFunc(display);
   glutMouseFunc(mouse);
+  glutKeyboardFunc(keyboard);
   glutMainLoop();
   return 0;
 }
