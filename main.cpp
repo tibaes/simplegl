@@ -14,11 +14,16 @@ using namespace std;
 int WIN_HEIGHT = 500;
 int WIN_WIDTH = 1000;
 
+vector<GLfloat> vertexes;
+
+void updateModel() { cout << "should update!" << endl; }
+
 // Render scene
 void display(GLuint &vao) {
   glClear(GL_COLOR_BUFFER_BIT);
-
   glBindVertexArray(vao);
+
+  // square the drawing area
   glDrawArrays(GL_LINES, 0, 8);
 
   // Swap front and back buffers
@@ -31,11 +36,10 @@ void initialize(GLuint &vao) {
   glBindVertexArray(vao);
 
   // Drawing area
-  GLfloat vertices_position[16] = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
-                                   -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
-                                   -0.95, -0.95, -0.95, 0.95};
-
-  glEnable(GL_PROGRAM_POINT_SIZE);
+  vector<GLfloat> drawingArea = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
+                                 -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
+                                 -0.95, -0.95, -0.95, 0.95};
+  vertexes.insert(vertexes.end(), drawingArea.begin(), drawingArea.end());
 
   // Create a Vector Buffer Object that will store the vertices on video memory
   GLuint vbo;
@@ -43,8 +47,8 @@ void initialize(GLuint &vao) {
 
   // Allocate space and upload the data from CPU to GPU
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position), vertices_position,
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(GLfloat),
+               vertexes.data(), GL_STATIC_DRAW);
 
   GLuint shaderProgram =
       create_program("shaders/vert.shader", "shaders/frag.shader");
@@ -57,6 +61,9 @@ void initialize(GLuint &vao) {
 
   // Enable the attribute
   glEnableVertexAttribArray(position_attribute);
+
+  // Enable points
+  glEnable(GL_PROGRAM_POINT_SIZE);
 }
 
 // Called when the window is resized
@@ -91,6 +98,8 @@ void mouse(int button, int action) {
       float fx = x / float(WIN_WIDTH / 2);
       float fy = y / float(WIN_HEIGHT);
       cout << "mouse drawable: " << fx << ", " << fy << endl;
+      ctrlPts.pushCtrlPt(Point2d{fx, fy});
+      updateModel();
     } else {
       cout << "mouse preview" << endl;
     }
