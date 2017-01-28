@@ -87,7 +87,13 @@ void mouse(int button, int action) {
   if (action == 1) {
     int x, y;
     glfwGetMousePos(&x, &y);
-    cout << "mouse pressed: " << x << ", " << y << endl;
+    if (x < WIN_WIDTH / 2) {
+      float fx = x / float(WIN_WIDTH / 2);
+      float fy = y / float(WIN_HEIGHT);
+      cout << "mouse drawable: " << fx << ", " << fy << endl;
+    } else {
+      cout << "mouse preview" << endl;
+    }
   }
 }
 
@@ -104,7 +110,8 @@ int main() {
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
 
-  // Open a window and attach an OpenGL rendering context to the window surface
+  // Open a window and attach an OpenGL rendering context to the window
+  // surface
   if (!glfwOpenWindow(WIN_WIDTH, WIN_HEIGHT, 8, 8, 8, 0, 0, 0, GLFW_WINDOW)) {
     std::cerr << "Failed to open a window! I'm out!" << std::endl;
     glfwTerminate();
