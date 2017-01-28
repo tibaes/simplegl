@@ -6,9 +6,11 @@
 #include <iostream>
 #include <vector>
 
+#include "ctrlPts.hpp"
+
 using namespace std;
 
-vector<pair<int, int>> ctrlPts;
+const int WIN_SIZE = 500;
 
 // Read a shader source from a file
 // store the shader source in a std::vector<char>
@@ -50,7 +52,7 @@ int main() {
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
 
   // Open a window and attach an OpenGL rendering context to the window surface
-  if (!glfwOpenWindow(500, 500, 8, 8, 8, 0, 0, 0, GLFW_WINDOW)) {
+  if (!glfwOpenWindow(WIN_SIZE, WIN_SIZE, 8, 8, 8, 0, 0, 0, GLFW_WINDOW)) {
     std::cerr << "Failed to open a window! I'm out!" << std::endl;
     glfwTerminate();
     exit(-1);
@@ -119,7 +121,7 @@ void initialize(GLuint &vao) {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  // Points
+  // Drawing area
   GLfloat vertices_position[16] = {-0.9, 0.9,  0.9,  0.9,  0.9,  0.9,
                                    0.9,  -0.9, 0.9,  -0.9, -0.9, -0.9,
                                    -0.9, -0.9, -0.9, 0.9};
