@@ -11,7 +11,8 @@
 
 using namespace std;
 
-const int WIN_SIZE = 500;
+int WIN_HEIGHT = 500;
+int WIN_WIDTH = 1000;
 
 // Render scene
 void display(GLuint &vao) {
@@ -30,9 +31,9 @@ void initialize(GLuint &vao) {
   glBindVertexArray(vao);
 
   // Drawing area
-  GLfloat vertices_position[16] = {-0.9, 0.9,  0.9,  0.9,  0.9,  0.9,
-                                   0.9,  -0.9, 0.9,  -0.9, -0.9, -0.9,
-                                   -0.9, -0.9, -0.9, 0.9};
+  GLfloat vertices_position[16] = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
+                                   -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
+                                   -0.95, -0.95, -0.95, 0.95};
 
   glEnable(GL_PROGRAM_POINT_SIZE);
 
@@ -60,6 +61,9 @@ void initialize(GLuint &vao) {
 
 // Called when the window is resized
 void GLFWCALL window_resized(int width, int height) {
+  WIN_HEIGHT = height;
+  WIN_WIDTH = width;
+
   // Use red to clear the screen
   glClearColor(1, 0, 0, 1);
 
@@ -101,7 +105,7 @@ int main() {
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
 
   // Open a window and attach an OpenGL rendering context to the window surface
-  if (!glfwOpenWindow(WIN_SIZE, WIN_SIZE, 8, 8, 8, 0, 0, 0, GLFW_WINDOW)) {
+  if (!glfwOpenWindow(WIN_WIDTH, WIN_HEIGHT, 8, 8, 8, 0, 0, 0, GLFW_WINDOW)) {
     std::cerr << "Failed to open a window! I'm out!" << std::endl;
     glfwTerminate();
     exit(-1);
