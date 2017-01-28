@@ -16,15 +16,40 @@ int WIN_WIDTH = 1000;
 
 vector<GLfloat> vertexes;
 
-void updateModel() { cout << "should update!" << endl; }
+void updateModel() {
+  cout << "updating" << endl;
+  vertexes.clear();
+
+  // Drawing area
+  vector<GLfloat> drawingArea = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
+                                 -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
+                                 -0.95, -0.95, -0.95, 0.95};
+  vertexes.insert(vertexes.end(), drawingArea.begin(), drawingArea.end());
+
+  // Control points
+  for (auto p : ctrlPts.getRawCtrlPts()) {
+    p.x -= 1.0;
+    p.y = p.y * -2 + 1.0;
+    vertexes.push_back(p.x);
+    vertexes.push_back(p.y);
+  }
+
+  glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(GLfloat),
+               vertexes.data(), GL_STATIC_DRAW);
+}
 
 // Render scene
 void display(GLuint &vao) {
   glClear(GL_COLOR_BUFFER_BIT);
   glBindVertexArray(vao);
 
-  // square the drawing area
+  // draw drawing area
   glDrawArrays(GL_LINES, 0, 8);
+
+  // draw controll points
+  auto st_ctrlPts = 8;
+  auto sz_ctrlPts = ctrlPts.getRawCtrlPts().size();
+  glDrawArrays(GL_POINTS, st_ctrlPts, sz_ctrlPts);
 
   // Swap front and back buffers
   glfwSwapBuffers();
