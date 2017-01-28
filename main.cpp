@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 // Read a shader source from a file
 // store the shader source in a std::vector<char>
 void read_shader_src(const char *fname, std::vector<char> &buffer);
@@ -22,6 +24,9 @@ void GLFWCALL window_resized(int width, int height);
 
 // Called for keyboard events
 void keyboard(int key, int action);
+
+// Called for mouse button
+void mouse(int button, int action);
 
 // Render scene
 void display(GLuint &vao);
@@ -54,6 +59,9 @@ int main() {
 
   // Register a callback function for keyboard pressed events
   glfwSetKeyCallback(keyboard);
+
+  // Register a callback function for mouse events
+  glfwSetMouseButtonCallback(mouse);
 
   // Print the OpenGL version
   int major, minor, rev;
@@ -159,6 +167,15 @@ void keyboard(int key, int action) {
   if (key == 'Q' && action == GLFW_PRESS) {
     glfwTerminate();
     exit(0);
+  }
+}
+
+// Called for mouse button
+void mouse(int button, int action) {
+  if (action == 1) {
+    int x, y;
+    glfwGetMousePos(&x, &y);
+    cout << "mouse pressed: " << x << ", " << y << endl;
   }
 }
 

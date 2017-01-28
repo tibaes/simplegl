@@ -4,3 +4,6 @@ LDFLAGS = -lGL -lGLEW -lglfw
 
 main:
 	$(CXX) $(CXXFLAGS) main.cpp -o main $(LDFLAGS)
+
+clean:
+	rm main
