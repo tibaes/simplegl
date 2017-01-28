@@ -8,6 +8,8 @@
 
 using namespace std;
 
+vector<pair<int, int>> ctrlPts;
+
 // Read a shader source from a file
 // store the shader source in a std::vector<char>
 void read_shader_src(const char *fname, std::vector<char> &buffer);
@@ -106,7 +108,7 @@ void display(GLuint &vao) {
   glClear(GL_COLOR_BUFFER_BIT);
 
   glBindVertexArray(vao);
-  glDrawArrays(GL_TRIANGLES, 0, 12);
+  glDrawArrays(GL_LINES, 0, 8);
 
   // Swap front and back buffers
   glfwSwapBuffers();
@@ -117,16 +119,12 @@ void initialize(GLuint &vao) {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  // 4 triangles to be rendered
-  GLfloat vertices_position[24] = {
-      0.0, 0.0, 0.5,  0.0,  0.5,  0.5,
+  // Points
+  GLfloat vertices_position[16] = {-0.9, 0.9,  0.9,  0.9,  0.9,  0.9,
+                                   0.9,  -0.9, 0.9,  -0.9, -0.9, -0.9,
+                                   -0.9, -0.9, -0.9, 0.9};
 
-      0.0, 0.0, 0.0,  0.5,  -0.5, 0.5,
-
-      0.0, 0.0, -0.5, 0.0,  -0.5, -0.5,
-
-      0.0, 0.0, 0.0,  -0.5, 0.5,  -0.5,
-  };
+  glEnable(GL_PROGRAM_POINT_SIZE);
 
   // Create a Vector Buffer Object that will store the vertices on video memory
   GLuint vbo;
