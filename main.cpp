@@ -10,6 +10,7 @@
 #include "shaders.hpp"
 
 using namespace std;
+using namespace cg;
 
 int WIN_HEIGHT = 500;
 int WIN_WIDTH = 1000;
