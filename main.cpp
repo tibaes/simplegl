@@ -21,8 +21,15 @@ vector<Point2d> contour;
 
 Point2d render2D(Point2d p) {
   auto x = p.x - 1.0f;
-  auto y = p.y * -2 + 1.0f;
+  auto y = p.y * -2.0f + 1.0f;
   return Point2d{x, y};
+}
+
+Point3d render3D(Point3d p) {
+  auto x = p.x / 2.0f + 1.0f;
+  auto y = p.y * -2.0f + 1.0f;
+  auto z = p.z / 2.0f;
+  return Point3d{x, y, z};
 }
 
 void updateModel() {
