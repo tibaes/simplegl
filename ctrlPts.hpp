@@ -10,8 +10,8 @@ using Point2d = struct { float x, y; };
 using Point3d = struct { float x, y, z; };
 
 Point2d sum(Point2d a, Point2d b, float alpha) {
-  auto x = (a.x + b.x) * alpha;
-  auto y = (a.y + b.y) * alpha;
+  auto x = alpha * a.x + (1.0f - alpha) * b.x;
+  auto y = alpha * a.y + (1.0f - alpha) * b.y;
   return Point2d{x, y};
 }
 
