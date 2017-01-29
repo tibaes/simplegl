@@ -23,9 +23,9 @@ void updateModel() {
   vertexes.clear();
 
   // Drawing area
-  vector<GLfloat> drawingArea = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
-                                 -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
-                                 -0.95, -0.95, -0.95, 0.95};
+  vector<GLfloat> drawingArea = {
+      -0.95, 0.95, -0.05, 0.95, -0.05, -0.95, -0.95, -0.95, -0.95, 0.95,
+  };
   vertexes.insert(vertexes.end(), drawingArea.begin(), drawingArea.end());
 
   // Control points
@@ -46,10 +46,10 @@ void display(GLuint &vao) {
   glBindVertexArray(vao);
 
   // draw drawing area
-  glDrawArrays(GL_LINES, 0, 8);
+  glDrawArrays(GL_LINE_STRIP, 0, 5);
 
   // draw controll points
-  auto st_ctrlPts = 8;
+  auto st_ctrlPts = 5;
   auto sz_ctrlPts = ctrlPts.size();
   glDrawArrays(GL_POINTS, st_ctrlPts, sz_ctrlPts);
 
