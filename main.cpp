@@ -18,6 +18,12 @@ int WIN_WIDTH = 1000;
 vector<GLfloat> vertexes;
 vector<Point2d> ctrlPts;
 
+Point2d render2D(Point2d p) {
+  auto x = p.x - 1.0f;
+  auto y = p.y * -2 + 1.0f;
+  return Point2d{x, y};
+}
+
 void updateModel() {
   cout << "updating" << endl;
   vertexes.clear();
@@ -30,8 +36,15 @@ void updateModel() {
 
   // Control points
   for (auto p : ctrlPts) {
-    p.x -= 1.0;
-    p.y = p.y * -2 + 1.0;
+    p = render2D(p);
+    vertexes.push_back(p.x);
+    vertexes.push_back(p.y);
+  }
+
+  // Contour
+  auto contour = casteljau(ctrlPts);
+  for (auto p : contour) {
+    p = render2D(p);
     vertexes.push_back(p.x);
     vertexes.push_back(p.y);
   }
