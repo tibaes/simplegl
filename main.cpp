@@ -17,6 +17,7 @@ int WIN_WIDTH = 1000;
 
 vector<GLfloat> vertexes;
 vector<Point2d> ctrlPts;
+vector<Point2d> contour;
 
 Point2d render2D(Point2d p) {
   auto x = p.x - 1.0f;
@@ -42,7 +43,7 @@ void updateModel() {
   }
 
   // Contour
-  auto contour = casteljau(ctrlPts);
+  contour = casteljau(ctrlPts);
   for (auto p : contour) {
     p = render2D(p);
     vertexes.push_back(p.x);
@@ -65,6 +66,11 @@ void display(GLuint &vao) {
   auto st_ctrlPts = 5;
   auto sz_ctrlPts = ctrlPts.size();
   glDrawArrays(GL_POINTS, st_ctrlPts, sz_ctrlPts);
+
+  // draw contour
+  auto st_contour = st_ctrlPts + sz_ctrlPts;
+  auto sz_contour = contour.size();
+  glDrawArrays(GL_POINTS, st_contour, sz_contour);
 
   // Swap front and back buffers
   glfwSwapBuffers();
