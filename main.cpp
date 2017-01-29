@@ -70,7 +70,7 @@ void display(GLuint &vao) {
   // draw contour
   auto st_contour = st_ctrlPts + sz_ctrlPts;
   auto sz_contour = contour.size();
-  glDrawArrays(GL_POINTS, st_contour, sz_contour);
+  glDrawArrays(GL_LINE_STRIP, st_contour, sz_contour);
 
   // Swap front and back buffers
   glfwSwapBuffers();
