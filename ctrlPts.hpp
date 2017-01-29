@@ -14,20 +14,6 @@ Point2d sum(Point2d a, Point2d b, float alpha) {
   return Point2d{x, y};
 }
 
-class CtrlPts {
-public:
-  CtrlPts() = default;
-  ~CtrlPts() = default;
-  void pushCtrlPt(Point2d p) { v.push_back(p); }
-  void popCtrlPt() { v.pop_back(); }
-  vector<Point2d> getRawCtrlPts() const { return v; }
-
-  vector<Point2d> computeCurve(float alpha = 0.01) const;
-
-private:
-  vector<Point2d> v;
-};
-
 Point2d casteljauKernel(vector<Point2d> control, float alpha) {
   if (control.size() == 1)
     return control.front();
@@ -43,8 +29,6 @@ vector<Point2d> casteljau(vector<Point2d> control, float alpha_step = 0.01f) {
     points.push_back(casteljauKernel(control, alpha));
   return points;
 }
-
-auto ctrlPts = CtrlPts();
 }
 
 #endif

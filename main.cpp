@@ -16,6 +16,7 @@ int WIN_HEIGHT = 500;
 int WIN_WIDTH = 1000;
 
 vector<GLfloat> vertexes;
+vector<Point2d> ctrlPts;
 
 void updateModel() {
   cout << "updating" << endl;
@@ -28,7 +29,7 @@ void updateModel() {
   vertexes.insert(vertexes.end(), drawingArea.begin(), drawingArea.end());
 
   // Control points
-  for (auto p : ctrlPts.getRawCtrlPts()) {
+  for (auto p : ctrlPts) {
     p.x -= 1.0;
     p.y = p.y * -2 + 1.0;
     vertexes.push_back(p.x);
@@ -49,7 +50,7 @@ void display(GLuint &vao) {
 
   // draw controll points
   auto st_ctrlPts = 8;
-  auto sz_ctrlPts = ctrlPts.getRawCtrlPts().size();
+  auto sz_ctrlPts = ctrlPts.size();
   glDrawArrays(GL_POINTS, st_ctrlPts, sz_ctrlPts);
 
   // Swap front and back buffers
@@ -124,7 +125,7 @@ void mouse(int button, int action) {
       float fx = x / float(WIN_WIDTH / 2);
       float fy = y / float(WIN_HEIGHT);
       cout << "mouse drawable: " << fx << ", " << fy << endl;
-      ctrlPts.pushCtrlPt(Point2d{fx, fy});
+      ctrlPts.push_back(Point2d{fx, fy});
       updateModel();
     } else {
       cout << "mouse preview" << endl;
