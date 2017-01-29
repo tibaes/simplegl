@@ -1,6 +1,7 @@
 #ifndef CtrlPts_H
 #define CtrlPts_H
 
+#include <cmath>
 #include <vector>
 using namespace std;
 
@@ -27,6 +28,25 @@ vector<Point2d> casteljau(vector<Point2d> control, float alpha_step = 0.01f) {
   vector<Point2d> points;
   for (float alpha = 0.0f; alpha <= 1.0f; alpha += alpha_step)
     points.push_back(casteljauKernel(control, alpha));
+  return points;
+}
+
+vector<Point3d> plane(float radius, float y, float t_step = 0.01f) {
+  vector<Point3d> points;
+  for (float t = 0.0f; t <= 1.0f; t += t_step) {
+    auto x = radius * cos(t);
+    auto z = radius * sin(t);
+    points.push_back(Point3d{x, y, z});
+  }
+  return points;
+}
+
+vector<Point3d> model(vector<Point2d> contour) {
+  vector<Point3d> points;
+  for (auto pt_c : contour) {
+    auto pl = plane(pt_c.x, pt_c.y);
+    points.insert(points.end(), pl.begin(), pl.end());
+  }
   return points;
 }
 }
