@@ -62,12 +62,16 @@ void updateModel() {
   }
 
   // render
-  obj = model(contour);
-  for (auto p : obj) {
-    p = render3D(p);
-    vertexes.push_back(p.x);
-    vertexes.push_back(p.y);
-    vertexes.push_back(p.z);
+  if (ctrlPts.size() > 1) {
+    obj = model(contour);
+    for (auto p : obj) {
+      cout << "Model: " << p.x << ", " << p.y << ", " << p.z << " -> ";
+      p = render3D(p);
+      cout << "Model: " << p.x << ", " << p.y << ", " << p.z << endl;
+      vertexes.push_back(p.x);
+      vertexes.push_back(p.y);
+      vertexes.push_back(p.z);
+    }
   }
 
   glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(GLfloat),
@@ -92,12 +96,12 @@ void display(GLuint &vao) {
   auto sz_contour = contour.size();
   glDrawArrays(GL_LINE_STRIP, st_contour, sz_contour);
 
-  // draw model - todo
-  /*
-  auto st_model = st_contour + sz_contour;
-  auto sz_model = obj.size();
-  glDrawArrays(GL_POINTS, st_model, sz_model);
-  */
+  // draw model
+  if (ctrlPts.size() > 1) {
+    auto st_model = st_contour + sz_contour;
+    auto sz_model = obj.size();
+    glDrawArrays(GL_LINE_STRIP, st_model, sz_model);
+  }
 
   // Swap front and back buffers
   glfwSwapBuffers();
