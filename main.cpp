@@ -27,9 +27,9 @@ Point3d render2D(Point2d p) {
 }
 
 Point3d render3D(Point3d p) {
-  auto x = p.x / 2.0f + 1.0f;
+  auto x = p.x / 2.0f + .5f;
   auto y = p.y * -2.0f + 1.0f;
-  auto z = p.z / 2.0f;
+  auto z = p.z / 2.0f + .5f;
   return Point3d{x, y, z};
 }
 
@@ -65,9 +65,7 @@ void updateModel() {
   if (ctrlPts.size() > 1) {
     obj = model(contour);
     for (auto p : obj) {
-      cout << "Model: " << p.x << ", " << p.y << ", " << p.z << " -> ";
       p = render3D(p);
-      cout << "Model: " << p.x << ", " << p.y << ", " << p.z << endl;
       vertexes.push_back(p.x);
       vertexes.push_back(p.y);
       vertexes.push_back(p.z);
