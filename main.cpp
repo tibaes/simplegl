@@ -61,10 +61,28 @@ void updateModel() {
     vertexes.push_back(p.z);
   }
 
-  // render
+  // render triangles
   if (ctrlPts.size() > 1) {
     obj = model(contour);
-    for (auto p : obj) {
+    auto md_h = contour.size();
+    auto md_w = obj.size() / md_h;
+    auto getVTX = [&](int h, int w) { return obj[h * md_w + (w % md_w)]; };
+
+    vector<Point3d> md_v;
+    for (auto h = 0; h < md_h - 1; ++h) {
+      for (auto w = 0; w < md_w; ++w) {
+        // triangle 1
+        md_v.push_back(getVTX(h, w));
+        md_v.push_back(getVTX(h + 1, w));
+        md_v.push_back(getVTX(h, w + 1));
+        // triangle 2
+        md_v.push_back(getVTX(h + 1, w));
+        md_v.push_back(getVTX(h + 1, w + 1));
+        md_v.push_back(getVTX(h, w + 1));
+      }
+    }
+
+    for (auto p : md_v) {
       p = render3D(p);
       vertexes.push_back(p.x);
       vertexes.push_back(p.y);
@@ -97,8 +115,8 @@ void display(GLuint &vao) {
   // draw model
   if (ctrlPts.size() > 1) {
     auto st_model = st_contour + sz_contour;
-    auto sz_model = obj.size();
-    glDrawArrays(GL_LINE_STRIP, st_model, sz_model);
+    auto sz_model = (sz_contour - 1) * 2 * obj.size();
+    glDrawArrays(GL_TRIANGLES, st_model, sz_model);
   }
 
   // Swap front and back buffers
