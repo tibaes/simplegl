@@ -20,10 +20,10 @@ vector<Point2d> ctrlPts;
 vector<Point2d> contour;
 vector<Point3d> obj;
 
-Point2d render2D(Point2d p) {
+Point3d render2D(Point2d p) {
   auto x = p.x - 1.0f;
   auto y = p.y * -2.0f + 1.0f;
-  return Point2d{x, y};
+  return Point3d{x, y, 1.0f};
 }
 
 Point3d render3D(Point3d p) {
@@ -38,24 +38,27 @@ void updateModel() {
   vertexes.clear();
 
   // Drawing area
-  vector<GLfloat> drawingArea = {
-      -0.95, 0.95, -0.05, 0.95, -0.05, -0.95, -0.95, -0.95, -0.95, 0.95,
-  };
+  vector<GLfloat> drawingArea = {-0.95, 0.95,  1.0f, -0.05, 0.95,  1.0f,
+                                 -0.05, 0.95,  1.0f, -0.05, -0.95, 1.0f,
+                                 -0.05, -0.95, 1.0f, -0.95, -0.95, 1.0f,
+                                 -0.95, -0.95, 1.0f, -0.95, 0.95,  1.0f};
   vertexes.insert(vertexes.end(), drawingArea.begin(), drawingArea.end());
 
   // Control points
-  for (auto p : ctrlPts) {
-    p = render2D(p);
+  for (auto p0 : ctrlPts) {
+    auto p = render2D(p0);
     vertexes.push_back(p.x);
     vertexes.push_back(p.y);
+    vertexes.push_back(p.z);
   }
 
   // Contour
   contour = casteljau(ctrlPts);
-  for (auto p : contour) {
-    p = render2D(p);
+  for (auto p0 : contour) {
+    auto p = render2D(p0);
     vertexes.push_back(p.x);
     vertexes.push_back(p.y);
+    vertexes.push_back(p.z);
   }
 
   // render
@@ -77,10 +80,10 @@ void display(GLuint &vao) {
   glBindVertexArray(vao);
 
   // draw drawing area
-  glDrawArrays(GL_LINE_STRIP, 0, 5);
+  glDrawArrays(GL_LINES, 0, 8);
 
   // draw controll points
-  auto st_ctrlPts = 5;
+  auto st_ctrlPts = 8;
   auto sz_ctrlPts = ctrlPts.size();
   glDrawArrays(GL_POINTS, st_ctrlPts, sz_ctrlPts);
 
@@ -90,9 +93,11 @@ void display(GLuint &vao) {
   glDrawArrays(GL_LINE_STRIP, st_contour, sz_contour);
 
   // draw model - todo
+  /*
   auto st_model = st_contour + sz_contour;
   auto sz_model = obj.size();
   glDrawArrays(GL_POINTS, st_model, sz_model);
+  */
 
   // Swap front and back buffers
   glfwSwapBuffers();
@@ -104,9 +109,10 @@ void initialize(GLuint &vao) {
   glBindVertexArray(vao);
 
   // Drawing area
-  vector<GLfloat> drawingArea = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
-                                 -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
-                                 -0.95, -0.95, -0.95, 0.95};
+  vector<GLfloat> drawingArea = {-0.95, 0.95,  1.0f, -0.05, 0.95,  1.0f,
+                                 -0.05, 0.95,  1.0f, -0.05, -0.95, 1.0f,
+                                 -0.05, -0.95, 1.0f, -0.95, -0.95, 1.0f,
+                                 -0.95, -0.95, 1.0f, -0.95, 0.95,  1.0f};
   vertexes.insert(vertexes.end(), drawingArea.begin(), drawingArea.end());
 
   // Create a Vector Buffer Object that will store the vertices on video memory
@@ -125,7 +131,7 @@ void initialize(GLuint &vao) {
   GLint position_attribute = glGetAttribLocation(shaderProgram, "position");
 
   // Specify how the data for position can be accessed
-  glVertexAttribPointer(position_attribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(position_attribute, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
   // Enable the attribute
   glEnableVertexAttribArray(position_attribute);
