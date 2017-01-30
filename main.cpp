@@ -18,6 +18,7 @@ int WIN_WIDTH = 1000;
 vector<GLfloat> vertexes;
 vector<Point2d> ctrlPts;
 vector<Point2d> contour;
+vector<Point3d> obj;
 
 Point2d render2D(Point2d p) {
   auto x = p.x - 1.0f;
@@ -57,6 +58,15 @@ void updateModel() {
     vertexes.push_back(p.y);
   }
 
+  // render
+  obj = model(contour);
+  for (auto p : obj) {
+    p = render3D(p);
+    vertexes.push_back(p.x);
+    vertexes.push_back(p.y);
+    vertexes.push_back(p.z);
+  }
+
   glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(GLfloat),
                vertexes.data(), GL_STATIC_DRAW);
 }
@@ -78,6 +88,11 @@ void display(GLuint &vao) {
   auto st_contour = st_ctrlPts + sz_ctrlPts;
   auto sz_contour = contour.size();
   glDrawArrays(GL_LINE_STRIP, st_contour, sz_contour);
+
+  // draw model - todo
+  auto st_model = st_contour + sz_contour;
+  auto sz_model = obj.size();
+  glDrawArrays(GL_POINTS, st_model, sz_model);
 
   // Swap front and back buffers
   glfwSwapBuffers();
