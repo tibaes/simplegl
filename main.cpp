@@ -146,7 +146,7 @@ void GLFWCALL window_resized(int width, int height) {
   WIN_WIDTH = width;
 
   // Use red to clear the screen
-  glClearColor(1, 0, 0, 1);
+  glClearColor(0, 0, 0, 1);
 
   // Set the viewport
   glViewport(0, 0, width, height);
