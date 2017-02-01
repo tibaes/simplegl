@@ -16,6 +16,7 @@ Segue a lista de próximos passos:
 2. Utilizar a biblioteca glm para o calculo de diferentes perspectivas e
   posicionamento da camera.
 3. Realizar a renderização com iluminação e textura utilizando shaders.
+4. Permitir a edição dos pontos de controle (remover, reiniciar)
 
 Arquivos:
 ├── .git - histórico de evolução do trabalho
