@@ -1,4 +1,3 @@
-// Draw four triangles on a red background
 #include <GL/glew.h>
 #include <GL/glfw.h>
 #include <cstdlib>
@@ -165,7 +164,7 @@ void GLFWCALL window_resized(int width, int height) {
   WIN_HEIGHT = height;
   WIN_WIDTH = width;
 
-  // Use red to clear the screen
+  // Use black to clear the screen
   glClearColor(0, 0, 0, 1);
 
   // Set the viewport
