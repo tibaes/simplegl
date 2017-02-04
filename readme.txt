@@ -1,22 +1,15 @@
-Resultado parcial da implementação do trabalho 1 de computação visual
+Trabalho 1 de computação visual
 Aluno: Rafael Henrique Tibaes
 
-Neste momento o resultado encontra-se bastante limitado. Somente pode ser
-vizualizada a curva de casteljau com seus pontos de controle, e seu modelo
-tridimensional com camera fixa.
+Requerimentos (Testado no Ubuntu 16.04):
+- GLFW (libglfw-dev)
+- Glew (libglew-dev)
+- GLM (libglm-dev)
+- gcc (build-essentials)
 
-Na área da esquerda, delimitada pelo perímetro de um quadrado, podem ser
-adicionados os pontos de controle por meio do clique de mouse. A partir de dois
-pontos de controle, a curva suavizada por casteljau é renderizada em tempo-real.
-Também é renderizado na área da direita o modelo tridimensional formado pela
-convolução circular da curva em torno do eixo y.
+Compilação:
+  g++ -std=c++11 -O3 main.cpp -o main -lGL -lGLEW -lglfw
 
-Segue a lista de próximos passos:
-1. Isolar o modo de preview 2D da curva, de sua vizualização em 3D.
-2. Utilizar a biblioteca glm para o calculo de diferentes perspectivas e
-  posicionamento da camera.
-3. Realizar a renderização com iluminação e textura utilizando shaders.
-4. Permitir a edição dos pontos de controle (remover, reiniciar)
 
 Arquivos:
 ├── .git - histórico de evolução do trabalho
@@ -28,14 +21,15 @@ Arquivos:
 │   ├── frag.shader - Shader de fragmentos
 │   └── vert.shader - Shader de vertices
 └── shaders.hpp - Carga dos arquivos de shader
-.git
 
-Compilação:
-  g++ -std=c++11 -O3 main.cpp -o main -lGL -lGLEW -lglfw
 
-Observação irrelevante: Segui o conselho de um colega de que glfw seria mais
-fácil de manipular as janelas, e portanto utilizei um baseline com esta
-biblioteca. Contudo, tenho minhas dúvidas quanto a produtividade a partir desta
-decisão.
+Segue a lista de próximos passos:
+1. Isolar o modo de preview 2D da curva, de sua vizualização em 3D.
+2. Utilizar a biblioteca glm para o calculo de diferentes perspectivas e
+  posicionamento da camera.
+3. Realizar a renderização com iluminação e textura utilizando shaders.
+4. Permitir a edição dos pontos de controle (remover, reiniciar)
+
+
 
 Happy hacking!
