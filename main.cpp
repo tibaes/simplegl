@@ -32,10 +32,6 @@ auto preview = make_shared<Preview>(axisShader);
 auto modelling = make_shared<Modelling>();
 shared_ptr<RenderingProtocol> render = preview;
 
-void update() { render->update(); }
-
-void display() { render->display(); }
-
 // Initializing OpenGL and GLEW stuff
 void initGL(void) {
   glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -110,7 +106,7 @@ int main() {
 
   int running = GL_TRUE;
   while (running) {
-    display();
+    render->display();
     glfwPollEvents();
     running = glfwGetWindowParam(GLFW_OPENED);
   }
