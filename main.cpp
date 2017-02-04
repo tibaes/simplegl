@@ -9,24 +9,33 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <stack>
 #include <vector>
 
-#include "ctrlPts.hpp"
+#include "RenderingProtocol.hpp"
 #include "initShaders.h"
+#include "modelling.hpp"
+#include "preview.hpp"
 
 using namespace std;
 using namespace cg;
+
+enum class TMode { Preview, Modelling };
+auto mode = TMode::Preview;
+
+auto preview = make_shared<Preview>();
+auto modelling = make_shared<Modelling>();
+shared_ptr<RenderingProtocol> render = preview;
 
 int WIN_HEIGHT = 1000;
 int WIN_WIDTH = 1000;
 GLuint axisShader;
 GLuint axisVBO[3];
 
-vector<Point2d> ctrlPts;
+void update() { render->update(); }
 
-void update() {}
-
-void display() {}
+void display() { render->display(); }
 
 // Initializing OpenGL and GLEW stuff
 void initGL(void) {
@@ -57,9 +66,13 @@ void GLFWCALL window_resized(int width, int height) {
 
 // Called for keyboard events
 void keyboard(int key, int action) {
-  if (key == 'Q' && action == GLFW_PRESS) {
-    glfwTerminate();
-    exit(0);
+  if (action == GLFW_PRESS) {
+    if (key == 'Q') {
+      glfwTerminate();
+      exit(0);
+    } else {
+      render->onKeyPress(key);
+    }
   }
 }
 
@@ -68,15 +81,9 @@ void mouse(int button, int action) {
   if (action == 1) {
     int x, y;
     glfwGetMousePos(&x, &y);
-    if (x < WIN_WIDTH / 2) {
-      float fx = x / float(WIN_WIDTH / 2);
-      float fy = y / float(WIN_HEIGHT);
-      cout << "mouse drawable: " << fx << ", " << fy << endl;
-      ctrlPts.push_back(Point2d{fx, fy});
-      update();
-    } else {
-      cout << "mouse preview" << endl;
-    }
+    float fx = x / float(WIN_WIDTH);
+    float fy = y / float(WIN_HEIGHT);
+    render->onMouseClick(fx, fy);
   }
 }
 

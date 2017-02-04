@@ -4,13 +4,15 @@
 #include "RenderingProtocol.hpp"
 #include "ctrlPts.hpp"
 
+#include <memory>
 #include <stack>
 #include <vector>
 
 using namespace std;
 
 namespace cg {
-class Preview : public RenderingProtocol {
+class Preview : public RenderingProtocol,
+                public enable_shared_from_this<Preview> {
 public:
   void display() override {}
 
