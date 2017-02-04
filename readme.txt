@@ -8,19 +8,15 @@ Requerimentos (Testado no Ubuntu 16.04):
 - gcc (build-essentials)
 
 Compilação:
-  g++ -std=c++11 -O3 main.cpp -o main -lGL -lGLEW -lglfw
-
+  make all
 
 Arquivos:
 ├── .git - histórico de evolução do trabalho
 ├── ctrlPts.hpp - Calculo da curva por casteljau e convolução circular.
 ├── main.cpp - Renderização 2D da curva e 3D do modelo
-├── Makefile - Compilação (não funciona no ubuntu, inversão da ordem do linker)
+├── Makefile - Compilação
 ├── readme.txt - Este arquivo
-├── shaders - Diretório com os shaders para uso futuro
-│   ├── frag.shader - Shader de fragmentos
-│   └── vert.shader - Shader de vertices
-└── shaders.hpp - Carga dos arquivos de shader
+... shaders
 
 
 Segue a lista de próximos passos:
