@@ -18,11 +18,11 @@
 namespace cg {
 class RenderingProtocol {
 public:
-  virtual ~RenderingProtocol();
-  virtual void display() = 0;
-  virtual void update() = 0;
-  virtual void onMouseClick(float x, float y);
-  virtual void onKeyPress(char c);
+  virtual ~RenderingProtocol() {}
+  virtual void display() {}
+  virtual void update() {}
+  virtual void onMouseClick(float x, float y) {}
+  virtual void onKeyPress(char c) {}
 };
 }
 

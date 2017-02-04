@@ -12,6 +12,8 @@ namespace cg {
 class Modelling : public RenderingProtocol,
                   public enable_shared_from_this<Modelling> {
 public:
+  Modelling() {}
+  ~Modelling() {}
   void display() override {}
   void update() override {}
   void onMouseClick(float x, float y) override {}
