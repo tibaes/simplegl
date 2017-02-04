@@ -21,17 +21,16 @@
 using namespace std;
 using namespace cg;
 
-enum class TMode { Preview, Modelling };
-auto mode = TMode::Preview;
-
-auto preview = make_shared<Preview>();
-auto modelling = make_shared<Modelling>();
-shared_ptr<RenderingProtocol> render = preview;
-
 int WIN_HEIGHT = 1000;
 int WIN_WIDTH = 1000;
 GLuint axisShader;
-GLuint axisVBO[3];
+
+enum class TMode { Preview, Modelling };
+auto mode = TMode::Preview;
+
+auto preview = make_shared<Preview>(axisShader);
+auto modelling = make_shared<Modelling>();
+shared_ptr<RenderingProtocol> render = preview;
 
 void update() { render->update(); }
 
