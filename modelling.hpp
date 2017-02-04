@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace cg {
-class Modelling : RenderingProtocol {
+class Modelling : public RenderingProtocol {
 public:
   void display() override {}
   void update() override {}
