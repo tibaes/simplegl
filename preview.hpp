@@ -24,7 +24,13 @@ public:
     update();
   }
 
-  void onKeyPress(char c) override {}
+  void onKeyPress(char c) override {
+    cout << "Removing the last control point." << endl;
+    if (c == 'R' || c == 'r') {
+      ctrlPts.pop();
+      update();
+    }
+  }
 
 private:
   stack<Point2d> ctrlPts;
