@@ -76,8 +76,8 @@ void mouse(int button, int action) {
   if (action == 1) {
     int x, y;
     glfwGetMousePos(&x, &y);
-    float fx = x / float(WIN_WIDTH);
-    float fy = y / float(WIN_HEIGHT);
+    float fx = 2.0f * x / float(WIN_WIDTH) - 1.0f;
+    float fy = 2.0f * y / float(WIN_HEIGHT) - 1.0f;
     render->onMouseClick(fx, fy);
   }
 }
