@@ -35,7 +35,6 @@ shared_ptr<RenderingProtocol> render = preview;
 // Initializing OpenGL and GLEW stuff
 void initGL(void) {
   glClearColor(0.0, 0.0, 0.0, 0.0);
-  glPointSize(3.0);
   if (glewInit()) {
     cout << "Unable to initialize GLEW ... exiting" << endl;
     glfwTerminate();

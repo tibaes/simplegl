@@ -14,7 +14,8 @@ class Preview : public RenderingProtocol,
                 public enable_shared_from_this<Preview> {
 private:
   GLuint curveShader;
-  GLuint curveVBO[4];
+  GLuint pointsVBO[2];
+  GLuint curveVBO[2];
   int rsz_ctrlPts{0}, rsz_smooth{0};
   vector<cg::Point2d> ctrlPts;
 
@@ -24,26 +25,26 @@ public:
 
   void display() override {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1.0, 0.0, 0.0, 0.0);
 
-    glm::mat4 MVP = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
+    glm::mat4 MVP = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
     glUseProgram(curveShader);
     int loc = glGetUniformLocation(curveShader, "uMVP");
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
 
     // Control points
 
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, pointsVBO[0]);
     int attrV = glGetAttribLocation(curveShader, "aPosition");
     glVertexAttribPointer(attrV, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(attrV);
 
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, pointsVBO[1]);
     int attrC = glGetAttribLocation(curveShader, "aColor");
     glVertexAttribPointer(attrC, 4, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(attrC);
 
-    cout << "rendering " << rsz_ctrlPts / 3 << " points" << endl;
-
+    glPointSize(3.0f);
     glDrawArrays(GL_LINE_STRIP, 0, rsz_ctrlPts);
     glDisableVertexAttribArray(attrV);
     glDisableVertexAttribArray(attrC);
@@ -53,7 +54,7 @@ public:
   }
 
   void update() override {
-    float z_depth = 0.0f, color = 1.0f, color_step = 0.0f;
+    float z_depth = 1.0f, color = 1.0f, color_step = 0.0f;
 
     color = 0.0f;
     color_step = 1.0f / ctrlPts.size();
@@ -88,17 +89,17 @@ public:
 
     glGenBuffers(4, curveVBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, pointsVBO[0]);
     glBufferData(GL_ARRAY_BUFFER, vtx_points.size() * sizeof(float),
                  vtx_points.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, pointsVBO[1]);
     glBufferData(GL_ARRAY_BUFFER, vtx_points_color.size() * sizeof(float),
                  vtx_points_color.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[0]);
     glBufferData(GL_ARRAY_BUFFER, vtx_lines.size() * sizeof(float),
                  vtx_lines.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[3]);
+    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[1]);
     glBufferData(GL_ARRAY_BUFFER, vtx_lines_color.size() * sizeof(float),
                  vtx_lines_color.data(), GL_STATIC_DRAW);
   }
