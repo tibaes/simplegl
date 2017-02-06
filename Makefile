@@ -11,4 +11,4 @@ initShaders.o:
 	$(CXX) $(CXXFLAGS) -c initShaders.cpp -o initShaders.o $(LDFLAGS)
 
 clean:
-	rm main *.o
+	rm -f main *.o
