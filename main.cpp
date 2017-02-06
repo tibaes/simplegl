@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "RenderingProtocol.hpp"
-#include "initShaders.h"
 #include "modelling.hpp"
 #include "preview.hpp"
 
@@ -23,14 +22,13 @@ using namespace cg;
 
 int WIN_HEIGHT = 1000;
 int WIN_WIDTH = 1000;
-GLuint axisShader;
 
 enum class TMode { Preview, Modelling };
 auto mode = TMode::Preview;
 
-auto preview = make_shared<Preview>(axisShader);
-auto modelling = make_shared<Modelling>();
-shared_ptr<RenderingProtocol> render = preview;
+shared_ptr<Preview> preview;
+shared_ptr<Modelling> modelling;
+shared_ptr<RenderingProtocol> render;
 
 // Initializing OpenGL and GLEW stuff
 void initGL(void) {
@@ -82,6 +80,7 @@ void mouse(int button, int action) {
 }
 
 int main() {
+  glewExperimental = GL_TRUE;
   if (!glfwInit()) {
     std::cerr << "Failed to initialize GLFW! I'm out!" << std::endl;
     exit(-1);
@@ -101,7 +100,9 @@ int main() {
   glfwSetMouseButtonCallback(mouse);
 
   initGL();
-  axisShader = InitShader("axisShader.vert", "axisShader.frag");
+  preview = make_shared<Preview>();
+  modelling = make_shared<Modelling>();
+  render = preview;
 
   int running = GL_TRUE;
   while (running) {

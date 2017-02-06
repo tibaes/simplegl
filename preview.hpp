@@ -3,6 +3,7 @@
 
 #include "RenderingProtocol.hpp"
 #include "ctrlPts.hpp"
+#include "initShaders.h"
 
 #include <memory>
 #include <vector>
@@ -14,110 +15,19 @@ class Preview : public RenderingProtocol,
                 public enable_shared_from_this<Preview> {
 private:
   GLuint curveShader;
+  GLuint linesVBO[1], linesVBA[1];
   GLuint pointsVBO[2];
   GLuint curveVBO[2];
   int rsz_ctrlPts{0}, rsz_smooth{0};
   vector<cg::Point2d> ctrlPts;
 
-  GLuint cubeVBO[2];
-
-  void createCube() {
-
-    // cube
-    // ///////////////////////////////////////////////////////////////////////
-    //    v6----- v5
-    //   /|      /|
-    //  v1------v0|
-    //  | |     | |
-    //  | |v7---|-|v4
-    //  |/      |/
-    //  v2------v3
-
-    // vertex coords array for glDrawArrays()
-    // =====================================
-    // A cube has 6 sides and each side has 2 triangles, therefore, a cube
-    // consists
-    // of 36 vertices (6 sides * 2 tris * 3 vertices = 36 vertices). And, each
-    // vertex is 3 components (x,y,z) of floats, therefore, the size of vertex
-    // array is 108 floats (36 * 3 = 108).
-    GLfloat vertices[] = {
-        1,  1,  1,  -1, 1,  1,  -1, -1, 1, // v0-v1-v2 (front)
-        -1, -1, 1,  1,  -1, 1,  1,  1,  1, // v2-v3-v0
-
-        1,  1,  1,  1,  -1, 1,  1,  -1, -1, // v0-v3-v4 (right)
-        1,  -1, -1, 1,  1,  -1, 1,  1,  1,  // v4-v5-v0
-
-        1,  1,  1,  1,  1,  -1, -1, 1,  -1, // v0-v5-v6 (top)
-        -1, 1,  -1, -1, 1,  1,  1,  1,  1,  // v6-v1-v0
-
-        -1, 1,  1,  -1, 1,  -1, -1, -1, -1, // v1-v6-v7 (left)
-        -1, -1, -1, -1, -1, 1,  -1, 1,  1,  // v7-v2-v1
-
-        -1, -1, -1, 1,  -1, -1, 1,  -1, 1,  // v7-v4-v3 (bottom)
-        1,  -1, 1,  -1, -1, 1,  -1, -1, -1, // v3-v2-v7
-
-        1,  -1, -1, -1, -1, -1, -1, 1,  -1,  // v4-v7-v6 (back)
-        -1, 1,  -1, 1,  1,  -1, 1,  -1, -1}; // v6-v5-v4
-
-    // color array
-    GLfloat colors[] = {1, 1, 1, 1, 1, 0, 1, 0, 0, // v0-v1-v2 (front)
-                        1, 0, 0, 1, 0, 1, 1, 1, 1, // v2-v3-v0
-
-                        1, 1, 1, 1, 0, 1, 0, 0, 1, // v0-v3-v4 (right)
-                        0, 0, 1, 0, 1, 1, 1, 1, 1, // v4-v5-v0
-
-                        1, 1, 1, 0, 1, 1, 0, 1, 0, // v0-v5-v6 (top)
-                        0, 1, 0, 1, 1, 0, 1, 1, 1, // v6-v1-v0
-
-                        1, 1, 0, 0, 1, 0, 0, 0, 0, // v1-v6-v7 (left)
-                        0, 0, 0, 1, 0, 0, 1, 1, 0, // v7-v2-v1
-
-                        0, 0, 0, 0, 0, 1, 1, 0, 1, // v7-v4-v3 (bottom)
-                        1, 0, 1, 1, 0, 0, 0, 0, 0, // v3-v2-v7
-
-                        0, 0, 1, 0, 0, 0, 0, 1, 0,  // v4-v7-v6 (back)
-                        0, 1, 0, 0, 1, 1, 0, 0, 1}; // v6-v5-v4
-
-    glGenBuffers(2, cubeVBO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO[0]);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO[1]);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-  }
-
-  void displayCube() {
-    int attrV, attrC;
-
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO[0]);
-    attrV = glGetAttribLocation(curveShader, "aPosition");
-    glVertexAttribPointer(attrV, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(attrV);
-
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO[1]);
-    attrC = glGetAttribLocation(curveShader, "aColor");
-    glVertexAttribPointer(attrC, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(attrC);
-
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    glDisableVertexAttribArray(attrV);
-    glDisableVertexAttribArray(attrC);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-  }
-
   void createCtrlPts() {
     float color = 0.0f;
-    const float z_depth = 1.0f, color_step = 1.0f / ctrlPts.size();
+    const float color_step = 1.0f / ctrlPts.size();
     vector<float> vtx_points, vtx_points_color;
     for (const auto p : ctrlPts) {
       vtx_points.push_back(p.x);
       vtx_points.push_back(p.y);
-      vtx_points.push_back(z_depth);
       vtx_points_color.push_back(color);
       vtx_points_color.push_back(1.0f);
       vtx_points_color.push_back(1.0f - color);
@@ -137,14 +47,9 @@ private:
   }
 
   void displayCtrlPts() {
-    glm::mat4 MVP = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-    glUseProgram(curveShader);
-    int loc = glGetUniformLocation(curveShader, "uMVP");
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
-
     glBindBuffer(GL_ARRAY_BUFFER, pointsVBO[0]);
     int attrV = glGetAttribLocation(curveShader, "aPosition");
-    glVertexAttribPointer(attrV, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(attrV, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(attrV);
 
     glBindBuffer(GL_ARRAY_BUFFER, pointsVBO[1]);
@@ -153,7 +58,7 @@ private:
     glEnableVertexAttribArray(attrC);
 
     glPointSize(3.0f);
-    glDrawArrays(GL_LINE_STRIP, 0, rsz_ctrlPts);
+    glDrawArrays(GL_POINTS, 0, rsz_ctrlPts);
     glDisableVertexAttribArray(attrV);
     glDisableVertexAttribArray(attrC);
   }
@@ -161,13 +66,12 @@ private:
   void createCurve() {
     auto smooth = cg::casteljau(ctrlPts);
     float color = 0.0f;
-    const float z_depth = 1.0f, color_step = 1.0f / smooth.size();
+    const float color_step = 1.0f / smooth.size();
 
     vector<float> vtx_lines, vtx_lines_color;
     for (const auto p : smooth) {
       vtx_lines.push_back(p.x);
       vtx_lines.push_back(p.y);
-      vtx_lines.push_back(z_depth);
       vtx_lines_color.push_back(color);
       vtx_lines_color.push_back(1.0f);
       vtx_lines_color.push_back(1.0f - color);
@@ -188,21 +92,73 @@ private:
 
   void displayCurve() {}
 
-public:
-  bool drawCtrlPts{false}, drawCurve{false}, drawCube{true};
+  void createLines() {
+    // Use a Vertex Array Object
+    glGenVertexArrays(1, linesVBA);
+    glBindVertexArray(linesVBA[0]);
 
-  Preview(GLuint _curveShader) : curveShader{_curveShader} {}
+    // Drawing area
+    vector<GLfloat> drawingArea = {-0.95, 0.95,  1.0f, -0.05, 0.95,  1.0f,
+                                   -0.05, 0.95,  1.0f, -0.05, -0.95, 1.0f,
+                                   -0.05, -0.95, 1.0f, -0.95, -0.95, 1.0f,
+                                   -0.95, -0.95, 1.0f, -0.95, 0.95,  1.0f};
+
+    // Create a Vector Buffer Object that will store the vertices on video
+    // memory
+    glGenBuffers(1, linesVBO);
+
+    // Allocate space and upload the data from CPU to GPU
+    glBindBuffer(GL_ARRAY_BUFFER, linesVBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, drawingArea.size() * sizeof(GLfloat),
+                 drawingArea.data(), GL_STATIC_DRAW);
+
+    // Get the location of the attributes that enters in the vertex shader
+    GLint position_attribute = glGetAttribLocation(curveShader, "aPosition");
+
+    // Specify how the data for position can be accessed
+    glVertexAttribPointer(position_attribute, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Enable the attribute
+    glEnableVertexAttribArray(position_attribute);
+
+    // Enable points
+    glEnable(GL_PROGRAM_POINT_SIZE);
+  }
+
+  void displayLines() {
+    glBindVertexArray(linesVBA[0]);
+    glDrawArrays(GL_LINES, 0, 8);
+  }
+
+public:
+  Preview() {
+    cout << "starting shaders... " << endl;
+    curveShader = InitShader("curveShader.vert", "curveShader.frag");
+    cout << "curve shaders loaded!" << endl;
+    createLines();
+    cout << "lines created.. " << endl;
+  }
   ~Preview(){};
 
   void display() override {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(1.0, 0.0, 0.0, 0.0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glm::mat4 MVP = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+
+    // glUseProgram(curveShader);
+    // int loc = glGetUniformLocation(curveShader, "uMVP");
+    // glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
+    // displayCtrlPts();
+    displayLines();
+
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
     glfwSwapBuffers();
   }
 
-  void update() override {}
+  void update() override {
+    // createCtrlPts();
+  }
 
   void onMouseClick(float x, float y) override {
     cout << "Adding control point: " << x << ", " << y << endl;

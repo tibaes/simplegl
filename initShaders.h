@@ -3,7 +3,6 @@
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -16,8 +15,6 @@ typedef struct Shader {
   GLenum type;
   GLchar *source;
 } tShader;
-
-static char *readShaderSource(const char *shaderFile);
 
 GLuint InitShader(const char *vShaderFile, const char *fShaderFile);
 
