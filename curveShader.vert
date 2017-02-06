@@ -1,12 +1,12 @@
 in vec2 aPosition;
-in vec4 aColor;
+in vec3 aColor;
 
 varying vec4 vColor;
 
 uniform mat4 uMVP;
 
 void main() {
-	vColor = aColor;
+	vColor = vec4(aColor, 1.0);
   //gl_Position = uMVP * vec4(aPosition, 1.0, 1.0);
 	gl_Position = vec4(aPosition, 1.0, 1.0);
 }

@@ -15,7 +15,7 @@ class Preview : public RenderingProtocol,
                 public enable_shared_from_this<Preview> {
 private:
   GLuint curveShader;
-  GLuint linesVBO[1], linesVBA[1];
+  GLuint linesVBO, linesVBA;
   GLuint pointsVBO[2];
   GLuint curveVBO[2];
   int rsz_ctrlPts{0}, rsz_smooth{0};
@@ -61,6 +61,8 @@ private:
     glDrawArrays(GL_POINTS, 0, rsz_ctrlPts);
     glDisableVertexAttribArray(attrV);
     glDisableVertexAttribArray(attrC);
+
+    // glEnable(GL_PROGRAM_POINT_SIZE);
   }
 
   void createCurve() {
@@ -93,49 +95,41 @@ private:
   void displayCurve() {}
 
   void createLines() {
-    // Use a Vertex Array Object
-    glGenVertexArrays(1, linesVBA);
-    glBindVertexArray(linesVBA[0]);
+    glGenVertexArrays(1, &linesVBA);
+    glBindVertexArray(linesVBA);
 
-    // Drawing area
-    vector<GLfloat> drawingArea = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
-                                   -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
-                                   -0.95, -0.95, -0.95, 0.95};
+    vector<GLfloat> vertexes = {-0.95, -0.95, -0.95, 0.95,  0.95,
+                                0.95,  0.95,  -0.95, -0.95, -0.95};
+    vector<GLfloat> colors(5 * 3, 1.0);
+    auto sz_vertexes = vertexes.size() * sizeof(GLfloat);
+    auto sz_colors = colors.size() * sizeof(GLfloat);
 
-    // Create a Vector Buffer Object that will store the vertices on video
-    // memory
-    glGenBuffers(1, linesVBO);
+    glGenBuffers(1, &linesVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, linesVBO);
+    glBufferData(GL_ARRAY_BUFFER, sz_vertexes + sz_colors, NULL,
+                 GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sz_vertexes, vertexes.data());
+    glBufferSubData(GL_ARRAY_BUFFER, sz_vertexes, sz_colors, colors.data());
 
-    // Allocate space and upload the data from CPU to GPU
-    glBindBuffer(GL_ARRAY_BUFFER, linesVBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, drawingArea.size() * sizeof(GLfloat),
-                 drawingArea.data(), GL_STATIC_DRAW);
+    GLint attrP = glGetAttribLocation(curveShader, "aPosition");
+    glVertexAttribPointer(attrP, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attrP);
 
-    // Get the location of the attributes that enters in the vertex shader
-    GLint position_attribute = glGetAttribLocation(curveShader, "aPosition");
-
-    // Specify how the data for position can be accessed
-    glVertexAttribPointer(position_attribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // Enable the attribute
-    glEnableVertexAttribArray(position_attribute);
-
-    // Enable points
-    glEnable(GL_PROGRAM_POINT_SIZE);
+    GLint attrC = glGetAttribLocation(curveShader, "aColor");
+    glVertexAttribPointer(attrC, 3, GL_FLOAT, GL_FALSE, 0,
+                          (GLvoid *)sz_vertexes);
+    glEnableVertexAttribArray(attrC);
   }
 
   void displayLines() {
-    glBindVertexArray(linesVBA[0]);
-    glDrawArrays(GL_LINES, 0, 8);
+    glBindVertexArray(linesVBA);
+    glDrawArrays(GL_LINE_STRIP, 0, 5);
   }
 
 public:
   Preview() {
-    cout << "starting shaders... " << endl;
     curveShader = InitShader("curveShader.vert", "curveShader.frag");
-    cout << "curve shaders loaded!" << endl;
     createLines();
-    cout << "lines created.. " << endl;
   }
   ~Preview(){};
 
