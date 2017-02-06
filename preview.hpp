@@ -29,7 +29,7 @@ private:
     vector<GLfloat> vtx_points, vtx_points_color;
     for (const auto p : ctrlPts) {
       vtx_points.push_back(GLfloat(p.x));
-      vtx_points.push_back(GLfloat(p.y));
+      vtx_points.push_back(GLfloat(-1 * p.y));
       vtx_points_color.push_back(color);
       vtx_points_color.push_back(1.0f);
       vtx_points_color.push_back(1.0f - color);
@@ -59,7 +59,7 @@ private:
     glEnableVertexAttribArray(attrC);
 
     glEnable(GL_PROGRAM_POINT_SIZE);
-    glPointSize(3.0f);
+    glPointSize(10.0f);
   }
 
   void displayCtrlPts() {
@@ -75,7 +75,7 @@ private:
     vector<float> vtx_lines, vtx_lines_color;
     for (const auto p : smooth) {
       vtx_lines.push_back(p.x);
-      vtx_lines.push_back(-1 * p.y);
+      vtx_lines.push_back(p.y);
       vtx_lines_color.push_back(color);
       vtx_lines_color.push_back(1.0f);
       vtx_lines_color.push_back(1.0f - color);
