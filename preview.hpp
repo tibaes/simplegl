@@ -98,10 +98,9 @@ private:
     glBindVertexArray(linesVBA[0]);
 
     // Drawing area
-    vector<GLfloat> drawingArea = {-0.95, 0.95,  1.0f, -0.05, 0.95,  1.0f,
-                                   -0.05, 0.95,  1.0f, -0.05, -0.95, 1.0f,
-                                   -0.05, -0.95, 1.0f, -0.95, -0.95, 1.0f,
-                                   -0.95, -0.95, 1.0f, -0.95, 0.95,  1.0f};
+    vector<GLfloat> drawingArea = {-0.95, 0.95,  -0.05, 0.95,  -0.05, 0.95,
+                                   -0.05, -0.95, -0.05, -0.95, -0.95, -0.95,
+                                   -0.95, -0.95, -0.95, 0.95};
 
     // Create a Vector Buffer Object that will store the vertices on video
     // memory
@@ -116,7 +115,7 @@ private:
     GLint position_attribute = glGetAttribLocation(curveShader, "aPosition");
 
     // Specify how the data for position can be accessed
-    glVertexAttribPointer(position_attribute, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(position_attribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Enable the attribute
     glEnableVertexAttribArray(position_attribute);
