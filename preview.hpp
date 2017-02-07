@@ -17,7 +17,7 @@ private:
   GLuint curveShader;
   GLuint linesVBO, linesVBA;
   GLuint pointsVBO, pointsVBA;
-  GLuint curveVBO[2];
+  GLuint curveVBO, curveVBA;
   int rsz_ctrlPts{0}, rsz_smooth{0};
   vector<cg::Point2d> ctrlPts;
 
@@ -69,32 +69,47 @@ private:
 
   void createCurve() {
     auto smooth = cg::casteljau(ctrlPts);
-    float color = 0.0f;
-    const float color_step = 1.0f / smooth.size();
+    rsz_smooth = smooth.size();
 
-    vector<float> vtx_lines, vtx_lines_color;
+    GLfloat color = 0.0f;
+    const GLfloat color_step = 1.0f / smooth.size();
+    vector<GLfloat> vtx_lines, vtx_lines_color;
     for (const auto p : smooth) {
-      vtx_lines.push_back(p.x);
-      vtx_lines.push_back(p.y);
+      vtx_lines.push_back(GLfloat(p.x));
+      vtx_lines.push_back(GLfloat(-1 * p.y));
       vtx_lines_color.push_back(color);
       vtx_lines_color.push_back(1.0f);
       vtx_lines_color.push_back(1.0f - color);
-      vtx_lines_color.push_back(1.0f);
       color += color_step;
     }
-    rsz_smooth = vtx_lines.size();
+    auto sz_vertexes = vtx_lines.size() * sizeof(GLfloat);
+    auto sz_colors = vtx_lines_color.size() * sizeof(GLfloat);
 
-    glGenBuffers(2, curveVBO);
+    glGenVertexArrays(1, &curveVBA);
+    glBindVertexArray(curveVBA);
 
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, vtx_lines.size() * sizeof(float),
-                 vtx_lines.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, curveVBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, vtx_lines_color.size() * sizeof(float),
-                 vtx_lines_color.data(), GL_STATIC_DRAW);
+    glGenBuffers(1, &curveVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, curveVBO);
+    glBufferData(GL_ARRAY_BUFFER, sz_vertexes + sz_colors, NULL,
+                 GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sz_vertexes, vtx_lines.data());
+    glBufferSubData(GL_ARRAY_BUFFER, sz_vertexes, sz_colors,
+                    vtx_lines_color.data());
+
+    GLint attrP = glGetAttribLocation(curveShader, "aPosition");
+    glVertexAttribPointer(attrP, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attrP);
+
+    GLint attrC = glGetAttribLocation(curveShader, "aColor");
+    glVertexAttribPointer(attrC, 3, GL_FLOAT, GL_FALSE, 0,
+                          (GLvoid *)sz_vertexes);
+    glEnableVertexAttribArray(attrC);
   }
 
-  void displayCurve() {}
+  void displayCurve() {
+    glBindVertexArray(curveVBA);
+    glDrawArrays(GL_LINE_STRIP, 0, rsz_smooth);
+  }
 
   void createLines() {
     glGenVertexArrays(1, &linesVBA);
@@ -142,11 +157,16 @@ public:
     displayLines();
     if (rsz_ctrlPts > 0)
       displayCtrlPts();
+    if (rsz_ctrlPts > 1)
+      displayCurve();
 
     glfwSwapBuffers();
   }
 
-  void update() override { createCtrlPts(); }
+  void update() override {
+    createCtrlPts();
+    createCurve();
+  }
 
   void onMouseClick(float x, float y) override {
     cout << "Adding control point: " << x << ", " << y << endl;
