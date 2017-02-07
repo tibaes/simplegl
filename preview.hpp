@@ -175,7 +175,7 @@ public:
   }
 
   void onKeyPress(char c) override {
-    if (c == 'R') {
+    if (c == 'R' && ctrlPts.size() > 0) {
       cout << "Removed the last control point." << endl;
       ctrlPts.pop_back();
       update();
@@ -183,6 +183,7 @@ public:
     if (c == 'C') {
       cout << "Cleared all control points." << endl;
       ctrlPts.clear();
+      update();
     }
   }
 };
