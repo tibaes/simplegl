@@ -63,11 +63,12 @@ void keyboard(int key, int action) {
       glfwTerminate();
       exit(0);
     } else if (key == '1' && mode != TMode::Preview) {
+      cout << "Changing to editor mode" << endl;
       render = preview;
-      cout << "Changing to preview mode" << endl;
       mode = TMode::Preview;
     } else if (key == '2' && mode != TMode::Modelling) {
-      cout << "Changing to modelling mode" << endl;
+      cout << "Changing to renderer mode" << endl;
+      modelling->setCtrlPts(preview->getCtrlPts());
       render = modelling;
       mode = TMode::Modelling;
     } else {
