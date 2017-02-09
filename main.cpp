@@ -62,6 +62,14 @@ void keyboard(int key, int action) {
     if (key == 'Q') {
       glfwTerminate();
       exit(0);
+    } else if (key == '1' && mode != TMode::Preview) {
+      render = preview;
+      cout << "Changing to preview mode" << endl;
+      mode = TMode::Preview;
+    } else if (key == '2' && mode != TMode::Modelling) {
+      cout << "Changing to modelling mode" << endl;
+      render = modelling;
+      mode = TMode::Modelling;
     } else {
       render->onKeyPress(key);
     }
