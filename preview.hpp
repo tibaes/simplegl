@@ -115,9 +115,8 @@ private:
     glGenVertexArrays(1, &linesVBA);
     glBindVertexArray(linesVBA);
 
-    vector<GLfloat> vertexes = {-0.95, -0.95, -0.95, 0.95,  0.95,
-                                0.95,  0.95,  -0.95, -0.95, -0.95};
-    vector<GLfloat> colors(5 * 3, 1.0);
+    vector<GLfloat> vertexes = {0.0, 0.95, 0.0, -0.95, -0.95, 0.0, 0.95, 0.0};
+    vector<GLfloat> colors(4 * 3, 1.0);
     auto sz_vertexes = vertexes.size() * sizeof(GLfloat);
     auto sz_colors = colors.size() * sizeof(GLfloat);
 
@@ -140,7 +139,7 @@ private:
 
   void displayLines() {
     glBindVertexArray(linesVBA);
-    glDrawArrays(GL_LINE_STRIP, 0, 5);
+    glDrawArrays(GL_LINES, 0, 4);
   }
 
 public:
