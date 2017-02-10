@@ -69,10 +69,14 @@ private:
   }
 
 public:
+  void loadShaders() {
+    glUseProgram(modelShader);
+    cout << "loaded obj shaders" << endl;
+  }
   Modelling() {
     modelShader = InitShader("modelShader.vert", "modelShader.frag");
   }
-  ~Modelling() {}
+  ~Modelling() = default;
 
   void setCtrlPts(vector<cg::Point2d> ctrlPts) {
     trianglesObj = 0;

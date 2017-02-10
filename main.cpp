@@ -64,11 +64,13 @@ void keyboard(int key, int action) {
       exit(0);
     } else if (key == '1' && mode != TMode::Preview) {
       cout << "Changing to editor mode" << endl;
+      preview->loadShaders();
       render = preview;
       mode = TMode::Preview;
     } else if (key == '2' && mode != TMode::Modelling) {
       cout << "Changing to renderer mode" << endl;
       modelling->setCtrlPts(preview->getCtrlPts());
+      modelling->loadShaders();
       render = modelling;
       mode = TMode::Modelling;
     } else {

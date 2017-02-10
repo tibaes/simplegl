@@ -90,8 +90,5 @@ GLuint InitShader(const char *vShaderFile, const char *fShaderFile) {
     exit(EXIT_FAILURE);
   }
 
-  /* use program object */
-  glUseProgram(program);
-
   return program;
 }

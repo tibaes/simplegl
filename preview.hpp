@@ -143,8 +143,13 @@ private:
   }
 
 public:
+  void loadShaders() {
+    glUseProgram(curveShader);
+    cout << "loaded curveShaders" << endl;
+  }
   Preview() {
     curveShader = InitShader("curveShader.vert", "curveShader.frag");
+    loadShaders();
     createLines();
   }
   ~Preview(){};
