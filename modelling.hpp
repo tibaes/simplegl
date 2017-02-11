@@ -65,6 +65,11 @@ private:
 
   void displayObj() {
     glBindVertexArray(objVBA);
+
+    glm::mat4 mvp = glm::mat4(1);
+    int loc = glGetUniformLocation(modelShader, "uMVP");
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mvp));
+
     glDrawArrays(GL_TRIANGLES, 0, trianglesObj);
   }
 
