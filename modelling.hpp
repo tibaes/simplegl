@@ -66,7 +66,16 @@ private:
   void displayObj() {
     glBindVertexArray(objVBA);
 
-    glm::mat4 mvp = glm::mat4(1);
+    GLfloat bs = 2.0f;
+    glm::mat4 ortho_box = glm::ortho(-bs, bs, -bs, bs, -bs, bs);
+
+    GLfloat radius = 1.0f;
+    GLfloat camY = sin(glfwGetTime()) * radius;
+    GLfloat camZ = cos(glfwGetTime()) * radius;
+    auto view = glm::lookAt(glm::vec3(0.0, camY, camZ),
+                            glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+
+    glm::mat4 mvp = ortho_box * view;
     int loc = glGetUniformLocation(modelShader, "uMVP");
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mvp));
 
