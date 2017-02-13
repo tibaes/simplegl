@@ -6,8 +6,8 @@
 using namespace std;
 
 namespace cg {
-using Point2d = struct { float x, y; };
-using Point3d = struct { float x, y, z; };
+using Point2d = struct TPoint2d { float x, y; };
+using Point3d = struct TPoint3d { float x, y, z; };
 
 Point2d sum(Point2d a, Point2d b, float alpha) {
   auto x = alpha * a.x + (1.0f - alpha) * b.x;
