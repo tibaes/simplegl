@@ -66,6 +66,8 @@ private:
   void displayObj() {
     glBindVertexArray(objVBA);
 
+    // position
+
     GLfloat bs = 2.0f;
     glm::mat4 ortho_box = glm::ortho(-bs, bs, -bs, bs, -bs, bs);
 
@@ -78,6 +80,11 @@ private:
     glm::mat4 mvp = ortho_box * view;
     int loc = glGetUniformLocation(modelShader, "uMVP");
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mvp));
+
+    // light
+
+    int loc_ambient = glGetUniformLocation(modelShader, "Ambient");
+    glUniform4f(loc_ambient, 0.5f, 0.0f, 0.0f, 1.0f);
 
     glDrawArrays(GL_TRIANGLES, 0, trianglesObj);
   }
