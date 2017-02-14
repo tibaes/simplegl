@@ -26,17 +26,23 @@ private:
     auto md_w = obj.size() / md_h;
     auto getVTX = [&](int h, int w) { return obj[h * md_w + (w % md_w)]; };
 
-    vector<Point3d> md_v;
+    vector<Point3d> md_v;   // triangle vertexes
+    vector<glm::vec3> md_n; // triangle normals
+    auto insertTriangle = [&](Point3d a, Point3d b, Point3d c) {
+      md_v.push_back(a);
+      md_v.push_back(b);
+      md_v.push_back(c);
+      auto aa = glm::vec3(a.x, a.y, a.z);
+      auto bb = glm::vec3(b.x, b.y, b.z);
+      auto cc = glm::vec3(c.x, c.y, c.z);
+      md_n.push_back(glm::normalize(glm::cross(cc - aa, bb - aa)));
+    };
+
     for (auto h = 0; h < md_h - 1; ++h) {
       for (auto w = 0; w < md_w; ++w) {
-        // triangle 1
-        md_v.push_back(getVTX(h, w));
-        md_v.push_back(getVTX(h + 1, w));
-        md_v.push_back(getVTX(h, w + 1));
-        // triangle 2
-        md_v.push_back(getVTX(h + 1, w));
-        md_v.push_back(getVTX(h + 1, w + 1));
-        md_v.push_back(getVTX(h, w + 1));
+        insertTriangle(getVTX(h, w), getVTX(h + 1, w), getVTX(h, w + 1));
+        insertTriangle(getVTX(h + 1, w), getVTX(h + 1, w + 1),
+                       getVTX(h, w + 1));
       }
     }
 
@@ -66,6 +72,8 @@ private:
   void displayObj() {
     glBindVertexArray(objVBA);
 
+    // todo: manipulate object (rotate, translate, rescale)
+
     // position
 
     GLfloat bs = 2.0f;
@@ -82,6 +90,8 @@ private:
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mvp));
 
     // light
+
+    // todo: texture
 
     int loc_ambient = glGetUniformLocation(modelShader, "Ambient");
     glUniform4f(loc_ambient, 0.5f, 0.0f, 0.0f, 1.0f);
