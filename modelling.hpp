@@ -37,7 +37,6 @@ private:
       auto cc = glm::vec3(c.x, c.y, c.z);
       md_n.push_back(glm::normalize(glm::cross(cc - aa, bb - aa)));
     };
-
     for (auto h = 0; h < md_h - 1; ++h) {
       for (auto w = 0; w < md_w; ++w) {
         insertTriangle(getVTX(h, w), getVTX(h + 1, w), getVTX(h, w + 1));
@@ -45,28 +44,44 @@ private:
                        getVTX(h, w + 1));
       }
     }
+    trianglesObj = md_v.size();
 
+    // todo: remove this conversion overread (use only vector<glm::vec3>)
     vector<GLfloat> vertexes;
     for (auto p : md_v) {
       vertexes.push_back(p.x);
       vertexes.push_back(p.y);
       vertexes.push_back(p.z);
     }
-    trianglesObj = vertexes.size() / 3;
+    vector<GLfloat> normals;
+    for (auto n : md_n) {
+      normals.push_back(n.x);
+      normals.push_back(n.y);
+      normals.push_back(n.z);
+    }
+    auto sz_vertexes = vertexes.size() * sizeof(GLfloat);
+    auto sz_normals = normals.size() * sizeof(GLfloat);
 
     glGenVertexArrays(1, &objVBA);
     glBindVertexArray(objVBA);
 
     glGenBuffers(1, &objVBO);
     glBindBuffer(GL_ARRAY_BUFFER, objVBO);
-    glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(GLfloat),
-                 vertexes.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sz_vertexes + sz_normals, NULL,
+                 GL_STATIC_DRAW);
+
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sz_vertexes, vertexes.data());
+    glBufferSubData(GL_ARRAY_BUFFER, sz_vertexes, sz_normals, normals.data());
 
     GLint attrP = glGetAttribLocation(modelShader, "aPosition");
     glVertexAttribPointer(attrP, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(attrP);
 
-    cout << "model has " << trianglesObj << " triangles" << endl;
+    GLint attrN = glGetAttribLocation(modelShader, "aNormal");
+    glVertexAttribPointer(attrN, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attrN);
+
+    cout << "model has " << trianglesObj / 3 << " triangles" << endl;
   }
 
   void displayObj() {

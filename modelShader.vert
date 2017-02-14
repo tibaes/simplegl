@@ -1,5 +1,8 @@
 in vec3 aPosition;
+in vec3 aNormal;
+
 varying vec4 vColor;
+
 uniform mat4 uMVP;
 
 void main() {
