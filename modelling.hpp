@@ -106,10 +106,30 @@ private:
 
     // light
 
-    // todo: texture
+    auto normalMat = glm::mat3(1.0);
+    int loc_normal = glGetUniformLocation(modelShader, "uNormalMat");
+    glUniformMatrix4fv(loc_normal, 1, GL_FALSE, glm::value_ptr(normalMat));
 
     int loc_ambient = glGetUniformLocation(modelShader, "Ambient");
-    glUniform4f(loc_ambient, 0.5f, 0.0f, 0.0f, 1.0f);
+    glUniform3f(loc_ambient, 0.2f, 0.0f, 0.0f);
+
+    int loc_lightColor = glGetUniformLocation(modelShader, "LightColor");
+    glUniform3f(loc_lightColor, 1.0, 1.0, 1.0);
+
+    int loc_lightDirection =
+        glGetUniformLocation(modelShader, "LightDirection");
+    glUniform3f(loc_lightDirection, 1.0, 1.0, 0.0);
+
+    int loc_halfVector = glGetUniformLocation(modelShader, "HalfVector");
+    glUniform3f(loc_halfVector, -1.0, 1.0, 0.0);
+
+    int loc_shininess = glGetUniformLocation(modelShader, "Shininess");
+    glUniform1f(loc_shininess, 0.5);
+
+    int loc_strenght = glGetUniformLocation(modelShader, "Strenght");
+    glUniform1f(loc_strenght, 0.5);
+
+    // todo: texture
 
     glDrawArrays(GL_TRIANGLES, 0, trianglesObj);
   }
