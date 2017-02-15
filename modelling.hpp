@@ -95,8 +95,8 @@ private:
     glm::mat4 ortho_box = glm::ortho(-bs, bs, -bs, bs, -bs, bs);
 
     GLfloat radius = 1.0f;
-    GLfloat camY = sin(glfwGetTime()) * radius;
-    GLfloat camZ = cos(glfwGetTime()) * radius;
+    GLfloat camY = abs(sin(glfwGetTime())) * radius;
+    GLfloat camZ = abs(cos(glfwGetTime())) * radius;
     auto view = glm::lookAt(glm::vec3(0.0, camY, camZ),
                             glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 
@@ -108,7 +108,7 @@ private:
 
     auto normalMat = glm::mat3(1.0);
     int loc_normal = glGetUniformLocation(modelShader, "uNormalMat");
-    glUniformMatrix4fv(loc_normal, 1, GL_FALSE, glm::value_ptr(normalMat));
+    glUniformMatrix3fv(loc_normal, 1, GL_FALSE, glm::value_ptr(normalMat));
 
     int loc_ambient = glGetUniformLocation(modelShader, "Ambient");
     glUniform3f(loc_ambient, 0.2f, 0.0f, 0.0f);

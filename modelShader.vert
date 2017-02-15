@@ -9,6 +9,6 @@ uniform mat3 uNormalMat;
 
 void main() {
 	vColor = vec4(1.0, 1.0, 1.0, 1.0);
-	vNormal = normalize(uNormalMat * aNormal);
+	vNormal = normalize(aNormal * uNormalMat);
   gl_Position = uMVP * vec4(aPosition, 1.0);
 }
