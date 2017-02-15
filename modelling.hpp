@@ -96,8 +96,9 @@ private:
 
     GLfloat radius = 1.0f;
     GLfloat camY = abs(sin(M_PI_4)) * radius;
-    GLfloat camZ = abs(cos(M_PI_4)) * radius;
-    auto view = glm::lookAt(glm::vec3(0.0, camY, camZ),
+    GLfloat camZ = cos(glfwGetTime()) * radius;
+    GLfloat camX = sin(glfwGetTime()) * radius;
+    auto view = glm::lookAt(glm::vec3(camX, camY, camZ),
                             glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 
     glm::mat4 mvp = ortho_box * view;
