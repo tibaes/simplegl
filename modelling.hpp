@@ -95,8 +95,8 @@ private:
     glm::mat4 ortho_box = glm::ortho(-bs, bs, -bs, bs, -bs, bs);
 
     GLfloat radius = 1.0f;
-    GLfloat camY = abs(sin(glfwGetTime())) * radius;
-    GLfloat camZ = abs(cos(glfwGetTime())) * radius;
+    GLfloat camY = abs(sin(M_PI_4)) * radius;
+    GLfloat camZ = abs(cos(M_PI_4)) * radius;
     auto view = glm::lookAt(glm::vec3(0.0, camY, camZ),
                             glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 
@@ -118,16 +118,16 @@ private:
 
     int loc_lightDirection =
         glGetUniformLocation(modelShader, "LightDirection");
-    glUniform3f(loc_lightDirection, 1.0, 1.0, 0.0);
+    glUniform3f(loc_lightDirection, 1.0, 1.0, 1.0);
 
     int loc_halfVector = glGetUniformLocation(modelShader, "HalfVector");
-    glUniform3f(loc_halfVector, -1.0, 1.0, 0.0);
+    glUniform3f(loc_halfVector, 1.0, 1.0, 1.0);
 
     int loc_shininess = glGetUniformLocation(modelShader, "Shininess");
-    glUniform1f(loc_shininess, 0.5);
+    glUniform1f(loc_shininess, 5.5);
 
     int loc_strenght = glGetUniformLocation(modelShader, "Strenght");
-    glUniform1f(loc_strenght, 0.5);
+    glUniform1f(loc_strenght, 1.0);
 
     // todo: texture
 
