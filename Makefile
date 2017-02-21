@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -O3 -std=c++11
-LDFLAGS = -lGL -lGLEW -lglfw
+CXXFLAGS = -O3 -std=c++11 `pkg-config --cflags opencv`
+LDFLAGS = -lGL -lGLEW -lglfw `pkg-config --libs opencv`
 
 all: main
 

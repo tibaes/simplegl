@@ -1,5 +1,7 @@
-varying vec4 vColor;
-varying vec3 vNormal;
+#version 330 core
+
+in vec3 vNormal;
+in vec2 vUV;
 
 uniform vec3 Ambient;
 uniform vec3 LightColor;
@@ -7,8 +9,13 @@ uniform vec3 LightDirection;
 uniform vec3 HalfVector;
 uniform float Shininess;
 uniform float Strenght;
+uniform sampler2D TextureSampler;
+
+out vec3 color;
 
 void main() {
+  vec3 texColor = texture(TextureSampler, vUV).rgb;
+
   float difuse = max(0.0, dot(vNormal, LightDirection));
   float specular = max(0.0, dot(vNormal, HalfVector));
 
@@ -20,6 +27,5 @@ void main() {
   vec3 scatteredLight = Ambient + LightColor * difuse;
   vec3 reflectedLight = LightColor * specular *  Strenght;
 
-  vec3 rgb = min(vColor.rgb * scatteredLight + reflectedLight, vec3(1.0));
-  gl_FragColor = vec4(rgb, vColor.a);
+  color = min(texColor * scatteredLight + reflectedLight, vec3(1.0));
 }
