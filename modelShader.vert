@@ -2,7 +2,6 @@
 
 in vec3 aPosition;
 in vec3 aNormal;
-in vec2 aUV;
 
 out vec3 vNormal;
 out vec2 vUV;
@@ -13,5 +12,5 @@ uniform mat3 uNormalMat;
 void main() {
 	vNormal = normalize(aNormal * uNormalMat);
   gl_Position = uMVP * vec4(aPosition, 1.0);
-	vUV = aUV;
+	vUV = vec2(aPosition.x, aPosition.y);
 }

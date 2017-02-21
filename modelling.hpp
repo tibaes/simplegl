@@ -23,8 +23,8 @@ private:
   using Point2i = struct { int y, x; };
 
   void createObj(vector<cg::Point2d> ctrlPts) {
-    auto contour = cg::casteljau(ctrlPts, 0.1f);
-    auto obj = cg::model(contour, 0.1f);
+    auto contour = cg::casteljau(ctrlPts, 0.2f);
+    auto obj = cg::model(contour, 0.2f);
 
     auto md_h = contour.size();
     auto md_w = obj.size() / md_h;
@@ -34,9 +34,8 @@ private:
       return glm::vec3(o.x, o.y, o.z);
     };
 
-    vector<glm::vec3> md_v;   // triangle vertexes
-    vector<glm::vec3> md_n;   // triangle normals
-    vector<glm::vec2> md_tex; // triangle texture uv
+    vector<glm::vec3> md_v; // triangle vertexes
+    vector<glm::vec3> md_n; // triangle normals
     auto insertTriangle = [&](Point2i A, Point2i B, Point2i C) {
       auto a = getVTX(A);
       auto b = getVTX(B);
@@ -45,9 +44,6 @@ private:
       md_v.push_back(b);
       md_v.push_back(c);
       md_n.push_back(glm::normalize(glm::cross(c - a, b - a)));
-      md_tex.push_back(glm::vec2(A.x / md_w, A.y / md_h));
-      md_tex.push_back(glm::vec2(B.x / md_w, B.y / md_h));
-      md_tex.push_back(glm::vec2(C.x / md_w, C.y / md_h));
     };
     for (auto h = 0; h < md_h - 1; ++h) {
       for (auto w = 0; w < md_w; ++w) {
@@ -60,20 +56,17 @@ private:
     trianglesObj = md_v.size();
     auto sz_vertexes = 3 * md_v.size() * sizeof(GLfloat);
     auto sz_normals = 3 * md_n.size() * sizeof(GLfloat);
-    auto sz_texture = 2 * md_tex.size() * sizeof(GLfloat);
 
     glGenVertexArrays(1, &objVBA);
     glBindVertexArray(objVBA);
 
     glGenBuffers(1, &objVBO);
     glBindBuffer(GL_ARRAY_BUFFER, objVBO);
-    glBufferData(GL_ARRAY_BUFFER, sz_vertexes + sz_normals + sz_texture, NULL,
+    glBufferData(GL_ARRAY_BUFFER, sz_vertexes + sz_normals, NULL,
                  GL_STATIC_DRAW);
 
     glBufferSubData(GL_ARRAY_BUFFER, 0, sz_vertexes, md_v.data());
     glBufferSubData(GL_ARRAY_BUFFER, sz_vertexes, sz_normals, md_n.data());
-    glBufferSubData(GL_ARRAY_BUFFER, sz_vertexes + sz_normals, sz_texture,
-                    md_tex.data());
 
     GLint attrP = glGetAttribLocation(modelShader, "aPosition");
     glVertexAttribPointer(attrP, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -82,10 +75,6 @@ private:
     GLint attrN = glGetAttribLocation(modelShader, "aNormal");
     glVertexAttribPointer(attrN, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(attrN);
-
-    GLint attrT = glGetAttribLocation(modelShader, "aUV");
-    glVertexAttribPointer(attrT, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(attrT);
 
     objTexture = loadTexture("pattern.jpg");
 
