@@ -27,6 +27,6 @@ void main() {
   vec3 scatteredLight = Ambient + LightColor * difuse;
   vec3 reflectedLight = LightColor * specular *  Strenght;
 
-  //color = min(texColor * scatteredLight + reflectedLight, vec3(1.0));
-  color = texColor;
+  color = min(texColor * scatteredLight + reflectedLight, vec3(1.0));
+  // color = texColor;
 }

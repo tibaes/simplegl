@@ -109,10 +109,10 @@ private:
     glUniformMatrix3fv(loc_normal, 1, GL_FALSE, glm::value_ptr(normalMat));
 
     int loc_ambient = glGetUniformLocation(modelShader, "Ambient");
-    glUniform3f(loc_ambient, 0.4f, 0.0f, 0.0f);
+    glUniform3f(loc_ambient, 0.1f, 0.1f, 0.1f);
 
     int loc_lightColor = glGetUniformLocation(modelShader, "LightColor");
-    glUniform3f(loc_lightColor, 1.0, .5, .5);
+    glUniform3f(loc_lightColor, 1.0, 1.0, 1.0);
 
     int loc_lightDirection =
         glGetUniformLocation(modelShader, "LightDirection");
