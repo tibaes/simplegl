@@ -23,8 +23,8 @@ private:
   using Point2i = struct { int y, x; };
 
   void createObj(vector<cg::Point2d> ctrlPts) {
-    auto contour = cg::casteljau(ctrlPts);
-    auto obj = cg::model(contour);
+    auto contour = cg::casteljau(ctrlPts, 0.1f);
+    auto obj = cg::model(contour, 0.1f);
 
     auto md_h = contour.size();
     auto md_w = obj.size() / md_h;

@@ -31,7 +31,7 @@ vector<Point2d> casteljau(vector<Point2d> control, float alpha_step = 0.01f) {
   return points;
 }
 
-vector<Point3d> plane(float radius, float y, float t_step = 0.01f) {
+vector<Point3d> plane(float radius, float y, float t_step) {
   vector<Point3d> points;
   for (float t = 0.0f; t <= 1.0f; t += t_step) {
     auto x = radius * cos(t * 2.0f * 3.14f);
@@ -41,10 +41,10 @@ vector<Point3d> plane(float radius, float y, float t_step = 0.01f) {
   return points;
 }
 
-vector<Point3d> model(vector<Point2d> contour) {
+vector<Point3d> model(vector<Point2d> contour, float t_step = 0.01f) {
   vector<Point3d> points;
   for (auto pt_c : contour) {
-    auto pl = plane(pt_c.x, pt_c.y);
+    auto pl = plane(pt_c.x, pt_c.y, t_step);
     points.insert(points.end(), pl.begin(), pl.end());
   }
   return points;
