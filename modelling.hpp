@@ -43,7 +43,8 @@ private:
       md_v.push_back(a);
       md_v.push_back(b);
       md_v.push_back(c);
-      md_n.push_back(glm::normalize(glm::cross(c - a, b - a)));
+      md_n.push_back(
+          glm::normalize(glm::cross(glm::abs(c - a), glm::abs(b - a))));
     };
     for (auto h = 0; h < md_h - 1; ++h) {
       for (auto w = 0; w < md_w; ++w) {
@@ -109,23 +110,25 @@ private:
     glUniformMatrix3fv(loc_normal, 1, GL_FALSE, glm::value_ptr(normalMat));
 
     int loc_ambient = glGetUniformLocation(modelShader, "Ambient");
-    glUniform3f(loc_ambient, 0.1f, 0.1f, 0.1f);
+    glUniform3f(loc_ambient, 0.3f, 0.3f, 0.3f);
 
     int loc_lightColor = glGetUniformLocation(modelShader, "LightColor");
     glUniform3f(loc_lightColor, 1.0, 1.0, 1.0);
 
     int loc_lightDirection =
         glGetUniformLocation(modelShader, "LightDirection");
-    glUniform3f(loc_lightDirection, .0, 1.0, .0);
+    auto lDir = glm::vec3(1.0, 1.0, 1.0);
+    glUniform3f(loc_lightDirection, lDir.x, lDir.y, lDir.z);
 
     int loc_halfVector = glGetUniformLocation(modelShader, "HalfVector");
-    glUniform3f(loc_halfVector, .0, .1, .0);
+    auto hVec = -lDir;
+    glUniform3f(loc_halfVector, hVec.x, hVec.y, hVec.z);
 
     int loc_shininess = glGetUniformLocation(modelShader, "Shininess");
-    glUniform1f(loc_shininess, .5);
+    glUniform1f(loc_shininess, 0.1);
 
     int loc_strenght = glGetUniformLocation(modelShader, "Strenght");
-    glUniform1f(loc_strenght, .10);
+    glUniform1f(loc_strenght, .4);
 
     // todo: texture
 

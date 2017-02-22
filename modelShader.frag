@@ -11,7 +11,7 @@ uniform float Shininess;
 uniform float Strenght;
 uniform sampler2D TextureSampler;
 
-out vec3 color;
+out vec4 color;
 
 void main() {
   vec3 texColor = texture(TextureSampler, vUV).rgb;
@@ -27,6 +27,6 @@ void main() {
   vec3 scatteredLight = Ambient + LightColor * difuse;
   vec3 reflectedLight = LightColor * specular *  Strenght;
 
-  color = min(texColor * scatteredLight + reflectedLight, vec3(1.0));
-  // color = texColor;
+  vec3 rgb = min(texColor * scatteredLight + reflectedLight, vec3(1.0));
+  color = vec4(rgb, 1.0);
 }
