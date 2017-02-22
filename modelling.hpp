@@ -20,6 +20,9 @@ private:
   GLuint objTexture;
   uint trianglesObj{0};
 
+  enum class TPosition { Left, Right, Botton, Top, Front, Back, Diag, Dynamic };
+  TPosition cameraPosition{TPosition::Dynamic};
+
   using Point2i = struct { int y, x; };
 
   void createObj(vector<cg::Point2d> ctrlPts) {
@@ -43,7 +46,8 @@ private:
       md_v.push_back(a);
       md_v.push_back(b);
       md_v.push_back(c);
-      md_n.push_back(glm::normalize(glm::cross(c - a, b - a)));
+      md_n.push_back(
+          glm::normalize(glm::cross(glm::abs(c - a), glm::abs(b - a))));
     };
     for (auto h = 0; h < md_h - 1; ++h) {
       for (auto w = 0; w < md_w; ++w) {
@@ -81,23 +85,50 @@ private:
     cout << "model has " << trianglesObj / 3 << " triangles" << endl;
   }
 
+  glm::mat4 getView() {
+    glm::vec3 cam;
+    switch (cameraPosition) {
+    case TPosition::Left:
+      cam = glm::vec3(-1.0f, 0.0f, 0.0f);
+      break;
+    case TPosition::Right:
+      cam = glm::vec3(1.0f, 0.0f, 0.0f);
+      break;
+    case TPosition::Botton:
+      cam = glm::vec3(0.0f, -1.0f, 0.0f);
+      break;
+    case TPosition::Top:
+      cam = glm::vec3(sin(glfwGetTime()), abs(sin(glfwGetTime())),
+                      cos(glfwGetTime()));
+      break;
+    case TPosition::Front:
+      cam = glm::vec3(0.0f, 0.0f, 1.0f);
+      break;
+    case TPosition::Back:
+      cam = glm::vec3(0.0f, 0.0f, -1.0f);
+      break;
+    case TPosition::Diag:
+      cam = glm::vec3(sin(0.0f), abs(sin(M_PI_4)), cos(0.0f));
+      break;
+    case TPosition::Dynamic:
+    default:
+      cam = glm::vec3(sin(glfwGetTime()), abs(sin(M_PI_4)), cos(glfwGetTime()));
+      break;
+    }
+
+    auto view =
+        glm::lookAt(cam, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    return view;
+  }
+
   void displayObj() {
     glBindVertexArray(objVBA);
-
-    // todo: manipulate object (rotate, translate, rescale)
 
     // position
 
     GLfloat bs = 2.0f;
     glm::mat4 ortho_box = glm::ortho(-bs, bs, -bs, bs, -bs, bs);
-
-    GLfloat radius = 1.0f;
-    GLfloat camY = abs(sin(M_PI_4)) * radius;
-    GLfloat camZ = cos(glfwGetTime()) * radius;
-    GLfloat camX = sin(glfwGetTime()) * radius;
-    auto view = glm::lookAt(glm::vec3(camX, camY, camZ),
-                            glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-
+    glm::mat4 view = getView();
     glm::mat4 mvp = ortho_box * view;
     int loc = glGetUniformLocation(modelShader, "uMVP");
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -109,25 +140,25 @@ private:
     glUniformMatrix3fv(loc_normal, 1, GL_FALSE, glm::value_ptr(normalMat));
 
     int loc_ambient = glGetUniformLocation(modelShader, "Ambient");
-    glUniform3f(loc_ambient, 0.4f, 0.0f, 0.0f);
+    glUniform3f(loc_ambient, 0.3f, 0.3f, 0.3f);
 
     int loc_lightColor = glGetUniformLocation(modelShader, "LightColor");
-    glUniform3f(loc_lightColor, 1.0, .5, .5);
+    glUniform3f(loc_lightColor, 1.0, 1.0, 1.0);
 
     int loc_lightDirection =
         glGetUniformLocation(modelShader, "LightDirection");
-    glUniform3f(loc_lightDirection, .0, 1.0, .0);
+    auto lDir = glm::vec3(1.0, 1.0, 1.0);
+    glUniform3f(loc_lightDirection, lDir.x, lDir.y, lDir.z);
 
     int loc_halfVector = glGetUniformLocation(modelShader, "HalfVector");
-    glUniform3f(loc_halfVector, .0, .1, .0);
+    auto hVec = -lDir;
+    glUniform3f(loc_halfVector, hVec.x, hVec.y, hVec.z);
 
     int loc_shininess = glGetUniformLocation(modelShader, "Shininess");
-    glUniform1f(loc_shininess, .5);
+    glUniform1f(loc_shininess, 0.1);
 
     int loc_strenght = glGetUniformLocation(modelShader, "Strenght");
-    glUniform1f(loc_strenght, .10);
-
-    // todo: texture
+    glUniform1f(loc_strenght, .4);
 
     glDrawArrays(GL_TRIANGLES, 0, trianglesObj);
   }
@@ -158,7 +189,35 @@ public:
 
   void update() override {}
   void onMouseClick(float x, float y) override {}
-  void onKeyPress(char c) override {}
+
+  void onKeyPress(char c) override {
+    switch (c) {
+    case '3':
+      cameraPosition = TPosition::Front;
+      break;
+    case '4':
+      cameraPosition = TPosition::Back;
+      break;
+    case '5':
+      cameraPosition = TPosition::Left;
+      break;
+    case '6':
+      cameraPosition = TPosition::Right;
+      break;
+    case '7':
+      cameraPosition = TPosition::Top;
+      break;
+    case '8':
+      cameraPosition = TPosition::Botton;
+      break;
+    case '9':
+      cameraPosition = TPosition::Diag;
+      break;
+    case '0':
+      cameraPosition = TPosition::Dynamic;
+      break;
+    }
+  }
 };
 }
 
