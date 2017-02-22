@@ -20,6 +20,9 @@ private:
   GLuint objTexture;
   uint trianglesObj{0};
 
+  enum class TPosition { Left, Right, Botton, Top, Front, Back, Diag, Dynamic };
+  TPosition cameraPosition{TPosition::Dynamic};
+
   using Point2i = struct { int y, x; };
 
   void createObj(vector<cg::Point2d> ctrlPts) {
@@ -82,23 +85,50 @@ private:
     cout << "model has " << trianglesObj / 3 << " triangles" << endl;
   }
 
+  glm::mat4 getView() {
+    glm::vec3 cam;
+    switch (cameraPosition) {
+    case TPosition::Left:
+      cam = glm::vec3(-1.0f, 0.0f, 0.0f);
+      break;
+    case TPosition::Right:
+      cam = glm::vec3(1.0f, 0.0f, 0.0f);
+      break;
+    case TPosition::Botton:
+      cam = glm::vec3(0.0f, -1.0f, 0.0f);
+      break;
+    case TPosition::Top:
+      cam = glm::vec3(sin(glfwGetTime()), abs(sin(glfwGetTime())),
+                      cos(glfwGetTime()));
+      break;
+    case TPosition::Front:
+      cam = glm::vec3(0.0f, 0.0f, 1.0f);
+      break;
+    case TPosition::Back:
+      cam = glm::vec3(0.0f, 0.0f, -1.0f);
+      break;
+    case TPosition::Diag:
+      cam = glm::vec3(sin(0.0f), abs(sin(M_PI_4)), cos(0.0f));
+      break;
+    case TPosition::Dynamic:
+    default:
+      cam = glm::vec3(sin(glfwGetTime()), abs(sin(M_PI_4)), cos(glfwGetTime()));
+      break;
+    }
+
+    auto view =
+        glm::lookAt(cam, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    return view;
+  }
+
   void displayObj() {
     glBindVertexArray(objVBA);
-
-    // todo: manipulate object (rotate, translate, rescale)
 
     // position
 
     GLfloat bs = 2.0f;
     glm::mat4 ortho_box = glm::ortho(-bs, bs, -bs, bs, -bs, bs);
-
-    GLfloat radius = 1.0f;
-    GLfloat camY = abs(sin(M_PI_4)) * radius;
-    GLfloat camZ = cos(glfwGetTime()) * radius;
-    GLfloat camX = sin(glfwGetTime()) * radius;
-    auto view = glm::lookAt(glm::vec3(camX, camY, camZ),
-                            glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-
+    glm::mat4 view = getView();
     glm::mat4 mvp = ortho_box * view;
     int loc = glGetUniformLocation(modelShader, "uMVP");
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -130,8 +160,6 @@ private:
     int loc_strenght = glGetUniformLocation(modelShader, "Strenght");
     glUniform1f(loc_strenght, .4);
 
-    // todo: texture
-
     glDrawArrays(GL_TRIANGLES, 0, trianglesObj);
   }
 
@@ -161,7 +189,35 @@ public:
 
   void update() override {}
   void onMouseClick(float x, float y) override {}
-  void onKeyPress(char c) override {}
+
+  void onKeyPress(char c) override {
+    switch (c) {
+    case '3':
+      cameraPosition = TPosition::Front;
+      break;
+    case '4':
+      cameraPosition = TPosition::Back;
+      break;
+    case '5':
+      cameraPosition = TPosition::Left;
+      break;
+    case '6':
+      cameraPosition = TPosition::Right;
+      break;
+    case '7':
+      cameraPosition = TPosition::Top;
+      break;
+    case '8':
+      cameraPosition = TPosition::Botton;
+      break;
+    case '9':
+      cameraPosition = TPosition::Diag;
+      break;
+    case '0':
+      cameraPosition = TPosition::Dynamic;
+      break;
+    }
+  }
 };
 }
 
